@@ -1,0 +1,133 @@
+{
+    parserClass = "com.github.madwareru.intellijsignificantwhitespacelang.language.parser._PyPasParser"
+    parserUtilClass = "com.github.madwareru.intellijsignificantwhitespacelang.language.psi.PyPasParserUtil"
+
+    extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+    psiClassPrefix = "PyPas"
+    psiImplClassSuffix = "Impl"
+    psiPackage = "com.github.madwareru.intellijsignificantwhitespacelang.language.psi"
+    psiImplPackage = "com.github.madwareru.intellijsignificantwhitespacelang.language.psi.impl"
+
+    elementTypeHolderClass = "com.github.madwareru.intellijsignificantwhitespacelang.language.psi.PyPasTypes"
+    elementTypeClass = "com.github.madwareru.intellijsignificantwhitespacelang.language.psi.PyPasElementType"
+    tokenTypeClass = "com.github.madwareru.intellijsignificantwhitespacelang.language.psi.PyPasTokenType"
+
+    psiImplUtilClass = "com.github.madwareru.intellijsignificantwhitespacelang.language.psi.impl.PyPasPsiImplUtil"
+
+    tokens = [
+            COMMENT = "regexp://.*"
+            BOOLEAN = "regexp:true|false"
+            IDENT = "regexp:[A-Za-z_][A-Za-z0-9_]*"
+            INTEGER = "regexp:[+-]?[0-9][0-9_]*"
+            FLOAT = "regexp:([+-]?[0-9]+\.[0-9]*([Ee][0-9]+)?)|(\.[0-9]+([Ee][0-9]+)?)"
+            CHAR = "CHAR"
+            STRING = "STRING"
+            INDENT = "INDENT"
+            UNINDENT = "UNINDENT"
+            END = "END"
+
+            PARENTHESISL = "("
+            PARENTHESISR = ")"
+            BRACKETL = "["
+            BRACKETR = "]"
+            BRACEL = "{"
+            BRACER = "}"
+            COLON = ":"
+            COMMA = ","
+            DOT = "."
+            AND = "and"
+            OR = "or"
+            NOT = "not"
+            BITWISE_AND = "&"
+            BITWISE_OR = "|"
+            BITWISE_NOT = "~"
+            BITWISE_XOR = "^"
+            PLUS = "+"
+            MINUS = "-"
+            DIV = "/"
+            MUL = "*"
+            ASSIGNMENT_OP = ":="
+            NEQ_OP = "!="
+            EQ_OP = "="
+            LT_OP = "<"
+            HT_OP = ">"
+            LTEQ_OP = "<="
+            HTEQ_OP = ">="
+            VAR = "var"
+            PROGRAM = "program"
+            MODULE = "module"
+            FUNCTION = "function"
+            PROCEDURE = "procedure"
+            IF = "if"
+            ELIF = "elif"
+            ELSE = "else"
+            FOR = "for"
+            TO = "to"
+            WHILE = "while"
+            AS = "as"
+            TYPE = "type"
+            RECORD = "record"
+            ARRAY = "array"
+            RETURN = "return"
+            OF = "of"
+        ]
+}
+
+PyPas ::= program_header definitions
+program_header ::= (PROGRAM | MODULE) IDENT
+definitions ::= COLON INDENT definition+ UNINDENT DOT
+definition ::= proc_define | func_define | record_define
+proc_define ::= PROCEDURE IDENT PARENTHESISL [arg_defs] PARENTHESISR block_statements_body
+func_define ::= FUNCTION IDENT PARENTHESISL [arg_defs] PARENTHESISR MINUS HT_OP IDENT block_statements_body
+block_statements_body ::= COLON INDENT [var_block] [statements] UNINDENT
+var_block ::= VAR INDENT var_definitions UNINDENT
+var_definitions ::= var_definition+
+var_definition ::= IDENT COLON type_definition
+type_definition ::= simple_type_definition | array_type_definition
+simple_type_definition ::= IDENT
+array_type_definition ::= ARRAY BRACKETL INTEGER TO INTEGER BRACKETR OF IDENT
+statements ::= statement+
+statement ::= return_statement
+    | assignment_statement
+    | function_invocation
+    | if_statement
+    | for_statement
+    | while_statement
+
+if_statement ::= IF logic_and_expr block_statements_body
+    (ELIF logic_and_expr block_statements_body)*
+    (ELSE block_statements_body)?
+
+for_statement ::= FOR IDENT ASSIGNMENT_OP constant_literal to constant_literal block_statements_body
+while_statement ::= WHILE logic_and_expr block_statements_body
+return_statement ::= RETURN logic_and_expr
+assignment_statement ::= lvalue ASSIGNMENT_OP logic_and_expr
+lvalue ::= subfield_access | indexed_access | IDENT
+constant_literal ::= BOOLEAN | INTEGER | FLOAT | STRING
+variable_access ::= IDENT
+subfield_access ::= IDENT (DOT IDENT)+
+indexed_access ::= IDENT (BRACKETL logic_and_expr BRACKETR)+
+function_invocation ::= IDENT PARENTHESISL [args] PARENTHESISR
+
+term_expr ::= (PARENTHESISL logic_and_expr PARENTHESISR)
+    | function_invocation
+    | indexed_access
+    | subfield_access
+    | constant_literal
+    | variable_access
+
+plus_minus_expr ::= term_expr (PLUS | MINUS) term_expr | term_expr
+mul_div_expr ::= plus_minus_expr (MUL | DIV) plus_minus_expr | plus_minus_expr
+bit_not_expr ::= BITWISE_NOT mul_div_expr | mul_div_expr
+bit_or_xor_expr ::= bit_not_expr (BITWISE_OR | BITWISE_XOR) bit_not_expr | bit_not_expr
+bit_and_expr ::= bit_or_xor_expr BITWISE_AND bit_or_xor_expr | bit_or_xor_expr
+compare_expr ::= bit_and_expr (LT_OP | LTEQ_OP | HT_OP | HTEQ_OP | EQ_OP | NEQ_OP ) bit_and_expr | bit_and_expr
+logic_not_expr ::= NOT compare_expr | compare_expr
+logic_or_expr ::= logic_not_expr OR logic_not_expr | logic_not_expr
+logic_and_expr ::= logic_or_expr AND logic_or_expr | logic_or_expr
+
+arg_defs ::= var_definition (COMMA var_definition)*
+args ::= logic_and_expr (COMMA logic_and_expr)*
+record_define ::= RECORD IDENT record_body
+record_body ::= COLON INDENT var_definitions UNINDENT
