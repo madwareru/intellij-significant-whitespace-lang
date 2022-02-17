@@ -8,7 +8,10 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.elementType
 
 class PyPasFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     override fun buildLanguageFoldRegions(
@@ -28,21 +31,58 @@ class PyPasFoldingBuilder : CustomFoldingBuilder(), DumbAware {
 }
 
 private class PyPasFoldingVisitor(private val descriptors: MutableList<FoldingDescriptor>) : PyPasRecursiveVisitor() {
+    override fun visitDefinitions(o: PyPasDefinitions) {
+        val currentRange = o.textRange
+        descriptors += FoldingDescriptor(o.node, currentRange)
+        super.visitDefinitions(o)
+    }
+
     override fun visitRecordBody(o: PyPasRecordBody) {
         val currentRange = o.textRange
-        val definitionsRange = o.varDefinitions.textRange
-        val range = TextRange(currentRange.startOffset, definitionsRange.endOffset)
-        descriptors += FoldingDescriptor(o.node, range)
+        val varDefs = o.varDefinitions
+        val lastChild = getLastChildForVarDefinitions(varDefs)
+        if (lastChild != null) {
+            val range = TextRange(currentRange.startOffset, lastChild.textRange.endOffset)
+            descriptors += FoldingDescriptor(o.node, range)
+        }
         super.visitRecordBody(o)
     }
 
     override fun visitBlockStatementsBody(o: PyPasBlockStatementsBody) {
         val currentRange = o.textRange
-        val statementsRange = o.statements?.textRange
-        if (statementsRange != null) {
-            val range = TextRange(currentRange.startOffset, statementsRange.endOffset)
-            descriptors += FoldingDescriptor(o.node, range)
+        val statements = o.statements
+        if (statements != null) {
+            val lastChild = getLastChildForStatements(statements)
+            if (lastChild != null) {
+                val range = TextRange(currentRange.startOffset, lastChild.textRange.endOffset)
+                descriptors += FoldingDescriptor(o.node, range)
+            }
         }
         super.visitBlockStatementsBody(o)
     }
+
+    fun getLastChildForVarDefinitions(varDefinitions: PyPasVarDefinitions): PsiElement? {
+        var lastChild = varDefinitions.varDefinitionList.lastOrNull()?.lastChild
+        while (lastChild != null && shouldScrollLeft(lastChild)) {
+            lastChild = scrollLeft(lastChild)
+        }
+        return lastChild
+    }
+
+    fun getLastChildForStatements(statements: PyPasStatements): PsiElement? {
+        var lastChild = statements.statementList.lastOrNull()?.lastChild
+        while (lastChild != null && shouldScrollLeft(lastChild)) {
+            lastChild = scrollLeft(lastChild)
+        }
+        return lastChild
+    }
+
+    fun shouldScrollLeft(element: PsiElement): Boolean =
+        isElementOfType(element, PyPasTypes.NEW_LINE) ||
+                isElementOfType(element, PyPasTypes.UNINDENT) ||
+                element is PsiWhiteSpace
+
+    fun scrollLeft(element: PsiElement): PsiElement? = element.prevSibling ?: element.parent
+
+    fun isElementOfType(element: PsiElement, test: IElementType): Boolean = element.elementType?.equals(test) ?: false
 }
