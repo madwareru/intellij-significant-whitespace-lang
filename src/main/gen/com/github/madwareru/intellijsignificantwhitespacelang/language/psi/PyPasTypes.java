@@ -9,6 +9,7 @@ import com.github.madwareru.intellijsignificantwhitespacelang.language.psi.impl.
 public interface PyPasTypes {
 
   IElementType ARGS = new PyPasElementType("ARGS");
+  IElementType ARG_DEFINITION = new PyPasElementType("ARG_DEFINITION");
   IElementType ARG_DEFS = new PyPasElementType("ARG_DEFS");
   IElementType ARRAY_TYPE_DEFINITION = new PyPasElementType("ARRAY_TYPE_DEFINITION");
   IElementType ASSIGNMENT_STATEMENT = new PyPasElementType("ASSIGNMENT_STATEMENT");
@@ -29,7 +30,7 @@ public interface PyPasTypes {
   IElementType LOGIC_NOT_EXPR = new PyPasElementType("LOGIC_NOT_EXPR");
   IElementType LOGIC_OR_EXPR = new PyPasElementType("LOGIC_OR_EXPR");
   IElementType LVALUE = new PyPasElementType("LVALUE");
-  IElementType MUL_DIV_EXPR = new PyPasElementType("MUL_DIV_EXPR");
+  IElementType MUL_DIV_MOD_EXPR = new PyPasElementType("MUL_DIV_MOD_EXPR");
   IElementType PLUS_MINUS_EXPR = new PyPasElementType("PLUS_MINUS_EXPR");
   IElementType PROC_DEFINE = new PyPasElementType("PROC_DEFINE");
   IElementType PROGRAM_HEADER = new PyPasElementType("PROGRAM_HEADER");
@@ -37,6 +38,7 @@ public interface PyPasTypes {
   IElementType RECORD_DEFINE = new PyPasElementType("RECORD_DEFINE");
   IElementType RETURN_STATEMENT = new PyPasElementType("RETURN_STATEMENT");
   IElementType SIMPLE_TYPE_DEFINITION = new PyPasElementType("SIMPLE_TYPE_DEFINITION");
+  IElementType SINGLE_LINE_STATEMENT = new PyPasElementType("SINGLE_LINE_STATEMENT");
   IElementType STATEMENT = new PyPasElementType("STATEMENT");
   IElementType STATEMENTS = new PyPasElementType("STATEMENTS");
   IElementType SUBFIELD_ACCESS = new PyPasElementType("SUBFIELD_ACCESS");
@@ -83,9 +85,11 @@ public interface PyPasTypes {
   IElementType LTEQ_OP = new PyPasTokenType("<=");
   IElementType LT_OP = new PyPasTokenType("<");
   IElementType MINUS = new PyPasTokenType("-");
+  IElementType MOD = new PyPasTokenType("%");
   IElementType MODULE = new PyPasTokenType("module");
   IElementType MUL = new PyPasTokenType("*");
   IElementType NEQ_OP = new PyPasTokenType("!=");
+  IElementType NEW_LINE = new PyPasTokenType("NEW_LINE");
   IElementType NOT = new PyPasTokenType("not");
   IElementType OF = new PyPasTokenType("of");
   IElementType OR = new PyPasTokenType("or");
@@ -96,6 +100,7 @@ public interface PyPasTypes {
   IElementType PROGRAM = new PyPasTokenType("program");
   IElementType RECORD = new PyPasTokenType("record");
   IElementType RETURN = new PyPasTokenType("return");
+  IElementType SEMICOLON = new PyPasTokenType(";");
   IElementType STRING = new PyPasTokenType("STRING");
   IElementType TO = new PyPasTokenType("to");
   IElementType TYPE = new PyPasTokenType("type");
@@ -108,6 +113,9 @@ public interface PyPasTypes {
       IElementType type = node.getElementType();
       if (type == ARGS) {
         return new PyPasArgsImpl(node);
+      }
+      else if (type == ARG_DEFINITION) {
+        return new PyPasArgDefinitionImpl(node);
       }
       else if (type == ARG_DEFS) {
         return new PyPasArgDefsImpl(node);
@@ -169,8 +177,8 @@ public interface PyPasTypes {
       else if (type == LVALUE) {
         return new PyPasLvalueImpl(node);
       }
-      else if (type == MUL_DIV_EXPR) {
-        return new PyPasMulDivExprImpl(node);
+      else if (type == MUL_DIV_MOD_EXPR) {
+        return new PyPasMulDivModExprImpl(node);
       }
       else if (type == PLUS_MINUS_EXPR) {
         return new PyPasPlusMinusExprImpl(node);
@@ -192,6 +200,9 @@ public interface PyPasTypes {
       }
       else if (type == SIMPLE_TYPE_DEFINITION) {
         return new PyPasSimpleTypeDefinitionImpl(node);
+      }
+      else if (type == SINGLE_LINE_STATEMENT) {
+        return new PyPasSingleLineStatementImpl(node);
       }
       else if (type == STATEMENT) {
         return new PyPasStatementImpl(node);

@@ -11,14 +11,14 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.github.madwareru.intellijsignificantwhitespacelang.language.psi.*;
 
-public class PyPasArgDefsImpl extends ASTWrapperPsiElement implements PyPasArgDefs {
+public class PyPasSingleLineStatementImpl extends ASTWrapperPsiElement implements PyPasSingleLineStatement {
 
-  public PyPasArgDefsImpl(@NotNull ASTNode node) {
+  public PyPasSingleLineStatementImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PyPasVisitor visitor) {
-    visitor.visitArgDefs(this);
+    visitor.visitSingleLineStatement(this);
   }
 
   @Override
@@ -28,9 +28,21 @@ public class PyPasArgDefsImpl extends ASTWrapperPsiElement implements PyPasArgDe
   }
 
   @Override
-  @NotNull
-  public List<PyPasArgDefinition> getArgDefinitionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, PyPasArgDefinition.class);
+  @Nullable
+  public PyPasAssignmentStatement getAssignmentStatement() {
+    return findChildByClass(PyPasAssignmentStatement.class);
+  }
+
+  @Override
+  @Nullable
+  public PyPasFunctionInvocation getFunctionInvocation() {
+    return findChildByClass(PyPasFunctionInvocation.class);
+  }
+
+  @Override
+  @Nullable
+  public PyPasReturnStatement getReturnStatement() {
+    return findChildByClass(PyPasReturnStatement.class);
   }
 
 }

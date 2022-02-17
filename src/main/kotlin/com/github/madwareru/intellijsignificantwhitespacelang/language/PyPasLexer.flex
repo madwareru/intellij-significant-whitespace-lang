@@ -22,6 +22,11 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
 %}
 
 %{
+    protected boolean stillHasWorkToDo() {
+        return
+            !indentStack.isEmpty();
+    }
+
     boolean checkBol() {
         if (atBeginningOfTheLine) {
             atBeginningOfTheLine = false;
@@ -33,12 +38,18 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
         return false;
     }
 
-    IElementType drainIndentStack() {
-        if (!indentStack.isEmpty()) {
+    protected IElementType drainIndentStack() {
+        if (!indentStack.isEmpty()) { // in all other cases, just roll ROLLBACK states
             indentStack.pop();
             yypushback(yylength());
+            if (zzState == IN_INDENT_STACK_ROLLBACK) {
+                yybegin(IN_INDENT_STACK_ROLLBACK1);
+            } else  {
+                yybegin(IN_INDENT_STACK_ROLLBACK);
+            }
             return UNINDENT;
         }
+        yybegin(IN_FINAL);
         return null;
     }
 
@@ -90,10 +101,13 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
 %type IElementType
 
 %s IN_INDENT
+%s IN_INDENT_STACK_ROLLBACK
+%s IN_INDENT_STACK_ROLLBACK1
+%s IN_FINAL
 
 %unicode
 
-COMMENT="//".*
+COMMENT=[ \t\r]*"//"[^\n]*
 BOOLEAN=true|false
 IDENT=[A-Za-z_][A-Za-z0-9_]*
 INTEGER=[+-]?[0-9][0-9_]*
@@ -105,8 +119,11 @@ STRING=\"([^\r\n\"]|(\\[\S]))*\"
 
 <YYINITIAL> {
     [ \t\r]*\n           {
+                             if (atBeginningOfTheLine) {
+                                 return WHITE_SPACE;
+                             }
                              atBeginningOfTheLine = true;
-                             return WHITE_SPACE;
+                             return NEW_LINE;
                          }
     [ \t]                {if (!checkBol()) { return WHITE_SPACE; } }
     "("                  { if (!checkBol()) { return PARENTHESISL; } }
@@ -116,6 +133,7 @@ STRING=\"([^\r\n\"]|(\\[\S]))*\"
     "{"                  { if (!checkBol()) { return BRACEL; } }
     "}"                  { if (!checkBol()) { return BRACER; } }
     ":"                  { if (!checkBol()) { return COLON; } }
+    ";"                  { if (!checkBol()) { return SEMICOLON; } }
     ","                  { if (!checkBol()) { return COMMA; } }
     "."                  { if (!checkBol()) { return DOT; } }
     "and"                { if (!checkBol()) { return AND; } }
@@ -128,6 +146,7 @@ STRING=\"([^\r\n\"]|(\\[\S]))*\"
     "+"                  { if (!checkBol()) { return PLUS; } }
     "-"                  { if (!checkBol()) { return MINUS; } }
     "/"                  { if (!checkBol()) { return DIV; } }
+    "%"                  { if (!checkBol()) { return MOD; } }
     "*"                  { if (!checkBol()) { return MUL; } }
     ":="                 { if (!checkBol()) { return ASSIGNMENT_OP; } }
     "!="                 { if (!checkBol()) { return NEQ_OP; } }
@@ -153,8 +172,7 @@ STRING=\"([^\r\n\"]|(\\[\S]))*\"
     "return"             { if (!checkBol()) { return RETURN; } }
     "of"                 { if (!checkBol()) { return OF; } }
     "end"                { if (!checkBol()) { return END; } }
-    <<EOF>>              { return drainIndentStack(); }
-    {COMMENT}            { if (!checkBol()) { return COMMENT; } }
+    {COMMENT}            { return COMMENT; }
     {BOOLEAN}            { if (!checkBol()) { return BOOLEAN; } }
     {IDENT}              { if (!checkBol()) { return IDENT; } }
     {INTEGER}            { if (!checkBol()) { return INTEGER; } }
@@ -166,7 +184,6 @@ STRING=\"([^\r\n\"]|(\\[\S]))*\"
 <IN_INDENT> {
     " "         { currentIndent ++; }
     \t          { currentIndent += 4; }
-    <<EOF>>     { return drainIndentStack(); }
     [^]         { return handleIndentUnindent(); }
 }
 

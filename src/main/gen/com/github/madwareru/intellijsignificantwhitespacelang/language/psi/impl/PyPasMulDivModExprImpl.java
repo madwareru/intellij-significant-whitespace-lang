@@ -11,14 +11,14 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.github.madwareru.intellijsignificantwhitespacelang.language.psi.*;
 
-public class PyPasMulDivExprImpl extends ASTWrapperPsiElement implements PyPasMulDivExpr {
+public class PyPasMulDivModExprImpl extends ASTWrapperPsiElement implements PyPasMulDivModExpr {
 
-  public PyPasMulDivExprImpl(@NotNull ASTNode node) {
+  public PyPasMulDivModExprImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PyPasVisitor visitor) {
-    visitor.visitMulDivExpr(this);
+    visitor.visitMulDivModExpr(this);
   }
 
   @Override

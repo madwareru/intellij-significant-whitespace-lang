@@ -11,14 +11,14 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.github.madwareru.intellijsignificantwhitespacelang.language.psi.*;
 
-public class PyPasArgDefsImpl extends ASTWrapperPsiElement implements PyPasArgDefs {
+public class PyPasArgDefinitionImpl extends ASTWrapperPsiElement implements PyPasArgDefinition {
 
-  public PyPasArgDefsImpl(@NotNull ASTNode node) {
+  public PyPasArgDefinitionImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PyPasVisitor visitor) {
-    visitor.visitArgDefs(this);
+    visitor.visitArgDefinition(this);
   }
 
   @Override
@@ -29,8 +29,14 @@ public class PyPasArgDefsImpl extends ASTWrapperPsiElement implements PyPasArgDe
 
   @Override
   @NotNull
-  public List<PyPasArgDefinition> getArgDefinitionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, PyPasArgDefinition.class);
+  public PyPasTypeDefinition getTypeDefinition() {
+    return findNotNullChildByClass(PyPasTypeDefinition.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getIdent() {
+    return findNotNullChildByType(IDENT);
   }
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface PyPasMulDivExpr extends PsiElement {
+public interface PyPasMulDivModExpr extends PsiElement {
 
   @NotNull
   List<PyPasPlusMinusExpr> getPlusMinusExprList();

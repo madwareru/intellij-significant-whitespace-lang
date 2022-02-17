@@ -7,6 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public class PyPasVisitor extends PsiElementVisitor {
 
+  public void visitArgDefinition(@NotNull PyPasArgDefinition o) {
+    visitPsiElement(o);
+  }
+
   public void visitArgDefs(@NotNull PyPasArgDefs o) {
     visitPsiElement(o);
   }
@@ -91,7 +95,7 @@ public class PyPasVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitMulDivExpr(@NotNull PyPasMulDivExpr o) {
+  public void visitMulDivModExpr(@NotNull PyPasMulDivModExpr o) {
     visitPsiElement(o);
   }
 
@@ -120,6 +124,10 @@ public class PyPasVisitor extends PsiElementVisitor {
   }
 
   public void visitSimpleTypeDefinition(@NotNull PyPasSimpleTypeDefinition o) {
+    visitPsiElement(o);
+  }
+
+  public void visitSingleLineStatement(@NotNull PyPasSingleLineStatement o) {
     visitPsiElement(o);
   }
 

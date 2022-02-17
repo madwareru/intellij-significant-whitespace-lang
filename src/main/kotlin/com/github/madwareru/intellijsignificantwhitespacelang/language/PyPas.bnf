@@ -26,6 +26,7 @@
             INDENT = "INDENT"
             UNINDENT = "UNINDENT"
             END = "END"
+            NEW_LINE = "NEW_LINE"
 
             PARENTHESISL = "("
             PARENTHESISR = ")"
@@ -34,6 +35,7 @@
             BRACEL = "{"
             BRACER = "}"
             COLON = ":"
+            SEMICOLON = ";"
             COMMA = ","
             DOT = "."
             AND = "and"
@@ -46,6 +48,7 @@
             PLUS = "+"
             MINUS = "-"
             DIV = "/"
+            MOD = "%"
             MUL = "*"
             ASSIGNMENT_OP = ":="
             NEQ_OP = "!="
@@ -76,24 +79,25 @@
 
 PyPas ::= program_header definitions
 program_header ::= (PROGRAM | MODULE) IDENT
-definitions ::= COLON INDENT definition+ UNINDENT DOT
+definitions ::= COLON NEW_LINE INDENT definition+ UNINDENT
 definition ::= proc_define | func_define | record_define
 proc_define ::= PROCEDURE IDENT PARENTHESISL [arg_defs] PARENTHESISR block_statements_body
 func_define ::= FUNCTION IDENT PARENTHESISL [arg_defs] PARENTHESISR MINUS HT_OP IDENT block_statements_body
-block_statements_body ::= COLON INDENT [var_block] [statements] UNINDENT
-var_block ::= VAR INDENT var_definitions UNINDENT
+block_statements_body ::= COLON NEW_LINE INDENT [var_block] [statements] UNINDENT
+var_block ::= VAR NEW_LINE INDENT var_definitions UNINDENT
 var_definitions ::= var_definition+
-var_definition ::= IDENT COLON type_definition
+var_definition ::= IDENT COLON type_definition NEW_LINE
+arg_definition ::= IDENT COLON type_definition
 type_definition ::= simple_type_definition | array_type_definition
 simple_type_definition ::= IDENT
 array_type_definition ::= ARRAY BRACKETL INTEGER TO INTEGER BRACKETR OF IDENT
 statements ::= statement+
-statement ::= return_statement
-    | assignment_statement
-    | function_invocation
+statement ::= (single_line_statement (SEMICOLON single_line_statement)* NEW_LINE)
     | if_statement
     | for_statement
     | while_statement
+
+single_line_statement ::= assignment_statement | function_invocation | return_statement
 
 if_statement ::= IF logic_and_expr block_statements_body
     (ELIF logic_and_expr block_statements_body)*
@@ -117,17 +121,17 @@ term_expr ::= (PARENTHESISL logic_and_expr PARENTHESISR)
     | constant_literal
     | variable_access
 
-plus_minus_expr ::= term_expr (PLUS | MINUS) term_expr | term_expr
-mul_div_expr ::= plus_minus_expr (MUL | DIV) plus_minus_expr | plus_minus_expr
-bit_not_expr ::= BITWISE_NOT mul_div_expr | mul_div_expr
-bit_or_xor_expr ::= bit_not_expr (BITWISE_OR | BITWISE_XOR) bit_not_expr | bit_not_expr
-bit_and_expr ::= bit_or_xor_expr BITWISE_AND bit_or_xor_expr | bit_or_xor_expr
-compare_expr ::= bit_and_expr (LT_OP | LTEQ_OP | HT_OP | HTEQ_OP | EQ_OP | NEQ_OP ) bit_and_expr | bit_and_expr
+plus_minus_expr ::= term_expr ((PLUS | MINUS) term_expr)*
+mul_div_mod_expr ::= plus_minus_expr ((MUL | DIV | MOD) plus_minus_expr)*
+bit_not_expr ::= BITWISE_NOT mul_div_mod_expr | mul_div_mod_expr
+bit_or_xor_expr ::= bit_not_expr ((BITWISE_OR | BITWISE_XOR) bit_not_expr)*
+bit_and_expr ::= bit_or_xor_expr (BITWISE_AND bit_or_xor_expr)*
+compare_expr ::= bit_and_expr ((LT_OP | LTEQ_OP | HT_OP | HTEQ_OP | EQ_OP | NEQ_OP ) bit_and_expr)*
 logic_not_expr ::= NOT compare_expr | compare_expr
-logic_or_expr ::= logic_not_expr OR logic_not_expr | logic_not_expr
-logic_and_expr ::= logic_or_expr AND logic_or_expr | logic_or_expr
+logic_or_expr ::= logic_not_expr (OR logic_not_expr)*
+logic_and_expr ::= logic_or_expr (AND logic_or_expr)*
 
-arg_defs ::= var_definition (COMMA var_definition)*
+arg_defs ::= arg_definition (COMMA arg_definition)*
 args ::= logic_and_expr (COMMA logic_and_expr)*
 record_define ::= RECORD IDENT record_body
-record_body ::= COLON INDENT var_definitions UNINDENT
+record_body ::= COLON NEW_LINE INDENT var_definitions UNINDENT

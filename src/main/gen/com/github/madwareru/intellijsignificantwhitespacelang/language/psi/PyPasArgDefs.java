@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface PyPasArgDefs extends PsiElement {
 
   @NotNull
-  List<PyPasVarDefinition> getVarDefinitionList();
+  List<PyPasArgDefinition> getArgDefinitionList();
 
 }

@@ -29,8 +29,8 @@ public class PyPasBitNotExprImpl extends ASTWrapperPsiElement implements PyPasBi
 
   @Override
   @NotNull
-  public PyPasMulDivExpr getMulDivExpr() {
-    return findNotNullChildByClass(PyPasMulDivExpr.class);
+  public PyPasMulDivModExpr getMulDivModExpr() {
+    return findNotNullChildByClass(PyPasMulDivModExpr.class);
   }
 
 }

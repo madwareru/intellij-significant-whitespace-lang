@@ -26,6 +26,9 @@ public class PyPasLexer implements FlexLexer {
   /** lexical states */
   public static final int YYINITIAL = 0;
   public static final int IN_INDENT = 2;
+  public static final int IN_INDENT_STACK_ROLLBACK = 4;
+  public static final int IN_INDENT_STACK_ROLLBACK1 = 6;
+  public static final int IN_FINAL = 8;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -34,7 +37,7 @@ public class PyPasLexer implements FlexLexer {
    * l is of the form l = 2*k, k a non negative integer
    */
   private static final int ZZ_LEXSTATE[] = { 
-     0,  0,  1, 1
+     0,  0,  1,  1,  2,  2,  2,  2,  2, 2
   };
 
   /** 
@@ -56,12 +59,12 @@ public class PyPasLexer implements FlexLexer {
 
   /* The ZZ_CMAP_A table has 640 entries */
   static final char ZZ_CMAP_A[] = zzUnpackCMap(
-    "\11\26\1\27\1\2\2\4\1\3\22\26\1\66\1\52\1\24\3\26\1\43\1\23\1\30\1\31\1\50"+
-    "\1\47\1\37\1\17\1\21\1\1\12\16\1\36\1\26\1\53\1\51\1\54\2\26\4\15\1\22\25"+
-    "\15\1\32\1\25\1\33\1\46\1\20\1\26\1\12\1\15\1\61\1\41\1\10\1\11\1\57\1\64"+
-    "\1\62\2\15\1\13\1\60\1\40\1\42\1\56\1\15\1\6\1\14\1\5\1\7\1\55\1\63\1\15\1"+
-    "\65\1\15\1\34\1\44\1\35\1\45\6\26\1\4\32\26\1\0\337\26\1\0\177\26\13\0\35"+
-    "\26\2\4\5\26\1\0\57\26\1\0\40\26");
+    "\11\26\1\1\1\3\2\0\1\24\22\26\1\67\1\53\1\23\2\26\1\50\1\43\1\22\1\27\1\30"+
+    "\1\51\1\47\1\37\1\16\1\20\1\2\12\15\1\35\1\36\1\54\1\52\1\55\2\26\4\14\1\21"+
+    "\25\14\1\31\1\25\1\32\1\46\1\17\1\26\1\11\1\14\1\62\1\41\1\7\1\10\1\60\1\65"+
+    "\1\63\2\14\1\12\1\61\1\40\1\42\1\57\1\14\1\5\1\13\1\4\1\6\1\56\1\64\1\14\1"+
+    "\66\1\14\1\33\1\44\1\34\1\45\6\26\1\0\32\26\1\0\337\26\1\0\177\26\13\0\35"+
+    "\26\2\0\5\26\1\0\57\26\1\0\40\26");
 
   /** 
    * Translates DFA states to action switch labels.
@@ -69,20 +72,20 @@ public class PyPasLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\2\0\1\1\1\2\1\3\1\1\6\4\1\5\1\6"+
-    "\1\7\2\1\1\10\1\11\1\12\1\13\1\14\1\15"+
-    "\1\16\1\17\1\20\2\4\1\21\1\22\1\23\1\24"+
-    "\1\25\1\26\1\27\1\1\1\30\1\31\5\4\1\32"+
-    "\1\33\1\34\1\35\1\0\1\4\1\36\7\4\1\37"+
-    "\1\4\1\5\1\40\3\0\1\41\1\0\1\42\1\4"+
-    "\1\43\1\44\1\45\1\46\1\47\3\4\1\50\6\4"+
-    "\1\51\2\4\1\52\1\4\1\53\1\0\2\54\1\41"+
-    "\1\55\1\56\3\4\1\57\2\4\1\60\1\61\2\4"+
-    "\1\40\7\4\1\62\3\4\1\63\1\64\1\65\3\4"+
-    "\1\66\1\4\1\67\1\4\1\70\1\4\1\71";
+    "\3\0\1\1\1\2\1\3\1\4\6\5\1\6\1\7"+
+    "\1\10\3\1\1\11\1\12\1\13\1\14\1\15\1\16"+
+    "\1\17\1\20\1\21\2\5\1\22\1\23\1\24\1\25"+
+    "\1\26\1\27\1\30\1\31\1\1\1\32\1\33\5\5"+
+    "\1\34\1\35\1\36\2\0\1\37\1\5\1\40\7\5"+
+    "\1\41\1\5\1\6\1\42\3\0\1\43\1\0\1\44"+
+    "\1\5\1\45\1\46\1\47\1\50\1\51\3\5\1\52"+
+    "\6\5\1\53\2\5\1\54\1\5\1\55\1\0\2\56"+
+    "\1\43\1\57\1\60\3\5\1\61\2\5\1\62\1\63"+
+    "\2\5\1\42\7\5\1\64\3\5\1\65\1\66\1\67"+
+    "\3\5\1\70\1\5\1\71\1\5\1\72\1\5\1\73";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[130];
+    int [] result = new int[134];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -107,26 +110,26 @@ public class PyPasLexer implements FlexLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\67\0\156\0\245\0\156\0\334\0\u0113\0\u014a"+
-    "\0\u0181\0\u01b8\0\u01ef\0\u0226\0\u025d\0\u0294\0\u02cb\0\u0302"+
-    "\0\u0339\0\334\0\156\0\156\0\156\0\156\0\156\0\156"+
-    "\0\u0370\0\156\0\u03a7\0\u03de\0\156\0\156\0\156\0\156"+
-    "\0\u0294\0\156\0\156\0\u0415\0\u044c\0\u0483\0\u04ba\0\u04f1"+
-    "\0\u0528\0\u055f\0\u0596\0\156\0\156\0\156\0\u05cd\0\334"+
-    "\0\u0604\0\u0181\0\u063b\0\u0672\0\u06a9\0\u06e0\0\u0717\0\u074e"+
-    "\0\u0785\0\u0181\0\u07bc\0\u07f3\0\u082a\0\u0861\0\u0898\0\u0339"+
-    "\0\156\0\u08cf\0\156\0\u0906\0\u0181\0\u0181\0\156\0\156"+
-    "\0\156\0\u093d\0\u0974\0\u09ab\0\u0181\0\u09e2\0\u0a19\0\u0a50"+
-    "\0\u0a87\0\u0abe\0\u0af5\0\u0181\0\u0b2c\0\u0b63\0\u0181\0\u0b9a"+
-    "\0\u0181\0\u0bd1\0\156\0\u0861\0\u0339\0\u0181\0\u0181\0\u0c08"+
-    "\0\u0c3f\0\u0c76\0\u0181\0\u0cad\0\u0ce4\0\u0181\0\u0181\0\u0d1b"+
-    "\0\u0d52\0\u0bd1\0\u0d89\0\u0dc0\0\u0df7\0\u0e2e\0\u0e65\0\u0e9c"+
-    "\0\u0ed3\0\u0181\0\u0f0a\0\u0f41\0\u0f78\0\u0181\0\u0181\0\u0181"+
-    "\0\u0faf\0\u0fe6\0\u101d\0\u0181\0\u1054\0\u0181\0\u108b\0\u0181"+
-    "\0\u10c2\0\u0181";
+    "\0\0\0\70\0\160\0\250\0\340\0\u0118\0\250\0\u0150"+
+    "\0\u0188\0\u01c0\0\u01f8\0\u0230\0\u0268\0\u02a0\0\u02d8\0\u0310"+
+    "\0\u0348\0\u0380\0\340\0\250\0\250\0\250\0\250\0\250"+
+    "\0\250\0\u03b8\0\250\0\250\0\u03f0\0\u0428\0\250\0\250"+
+    "\0\250\0\250\0\u02d8\0\250\0\250\0\250\0\u0460\0\u0498"+
+    "\0\u04d0\0\u0508\0\u0540\0\u0578\0\u05b0\0\u05e8\0\250\0\250"+
+    "\0\250\0\340\0\u0118\0\u0620\0\u0658\0\u01c0\0\u0690\0\u06c8"+
+    "\0\u0700\0\u0738\0\u0770\0\u07a8\0\u07e0\0\u01c0\0\u0818\0\u0850"+
+    "\0\u0888\0\u08c0\0\u08f8\0\u0380\0\250\0\u0930\0\250\0\u0968"+
+    "\0\u01c0\0\u01c0\0\250\0\250\0\250\0\u09a0\0\u09d8\0\u0a10"+
+    "\0\u01c0\0\u0a48\0\u0a80\0\u0ab8\0\u0af0\0\u0b28\0\u0b60\0\u01c0"+
+    "\0\u0b98\0\u0bd0\0\u01c0\0\u0c08\0\u01c0\0\u0c40\0\250\0\u08c0"+
+    "\0\u0380\0\u01c0\0\u01c0\0\u0c78\0\u0cb0\0\u0ce8\0\u01c0\0\u0d20"+
+    "\0\u0d58\0\u01c0\0\u01c0\0\u0d90\0\u0dc8\0\u0c40\0\u0e00\0\u0e38"+
+    "\0\u0e70\0\u0ea8\0\u0ee0\0\u0f18\0\u0f50\0\u01c0\0\u0f88\0\u0fc0"+
+    "\0\u0ff8\0\u01c0\0\u01c0\0\u01c0\0\u1030\0\u1068\0\u10a0\0\u01c0"+
+    "\0\u10d8\0\u01c0\0\u1110\0\u01c0\0\u1148\0\u01c0";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[130];
+    int [] result = new int[134];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -149,113 +152,113 @@ public class PyPasLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\3\1\4\1\5\1\6\1\3\1\7\1\10\1\11"+
-    "\1\12\1\13\1\14\3\11\1\15\1\16\1\11\1\17"+
-    "\1\11\1\20\1\21\2\3\1\22\1\23\1\24\1\25"+
-    "\1\26\1\27\1\30\1\31\1\32\1\33\1\11\1\34"+
-    "\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44"+
-    "\1\45\1\46\1\47\1\50\1\11\1\51\1\11\1\52"+
-    "\1\53\2\11\1\22\27\54\1\55\36\54\1\56\70\0"+
-    "\1\57\67\0\1\5\1\60\23\0\1\60\36\0\1\60"+
-    "\5\0\1\11\1\61\10\11\1\0\1\11\1\0\1\11"+
-    "\15\0\2\11\1\62\12\0\11\11\6\0\3\11\1\63"+
-    "\6\11\1\0\1\11\1\0\1\11\15\0\3\11\12\0"+
-    "\11\11\6\0\12\11\1\0\1\11\1\0\1\11\15\0"+
-    "\3\11\12\0\11\11\6\0\6\11\1\64\3\11\1\0"+
-    "\1\11\1\0\1\11\15\0\1\65\2\11\12\0\11\11"+
-    "\6\0\2\11\1\66\2\11\1\67\4\11\1\0\1\11"+
-    "\1\0\1\11\15\0\2\11\1\70\12\0\11\11\6\0"+
-    "\1\11\1\71\5\11\1\72\2\11\1\0\1\11\1\0"+
-    "\1\11\15\0\1\73\2\11\12\0\11\11\17\0\1\15"+
-    "\1\0\1\74\1\75\63\0\1\15\66\0\1\75\50\0"+
-    "\2\76\2\0\20\76\1\0\1\77\41\76\2\100\2\0"+
-    "\20\100\1\101\1\102\41\100\51\0\1\103\22\0\12\11"+
-    "\1\0\1\11\1\0\1\11\15\0\2\11\1\104\12\0"+
-    "\11\11\6\0\1\11\1\105\2\11\1\106\5\11\1\0"+
-    "\1\11\1\0\1\11\15\0\3\11\12\0\11\11\52\0"+
-    "\1\107\66\0\1\110\66\0\1\111\22\0\5\11\1\112"+
-    "\4\11\1\0\1\11\1\0\1\11\15\0\3\11\12\0"+
-    "\11\11\6\0\1\11\1\113\10\11\1\0\1\11\1\0"+
-    "\1\11\15\0\3\11\12\0\11\11\6\0\12\11\1\0"+
-    "\1\11\1\0\1\11\15\0\2\11\1\114\12\0\11\11"+
-    "\6\0\4\11\1\115\5\11\1\0\1\11\1\0\1\11"+
-    "\15\0\3\11\12\0\11\11\6\0\12\11\1\0\1\11"+
-    "\1\0\1\11\15\0\3\11\12\0\7\11\1\116\1\11"+
-    "\1\0\2\57\3\0\62\57\5\0\2\11\1\117\7\11"+
-    "\1\0\1\11\1\0\1\11\15\0\3\11\12\0\11\11"+
-    "\6\0\1\120\11\11\1\0\1\11\1\0\1\11\15\0"+
-    "\3\11\12\0\4\11\1\121\4\11\6\0\7\11\1\122"+
-    "\2\11\1\0\1\11\1\0\1\11\15\0\3\11\12\0"+
-    "\5\11\1\123\3\11\6\0\12\11\1\0\1\11\1\0"+
-    "\1\11\15\0\1\11\1\124\1\11\12\0\11\11\6\0"+
-    "\12\11\1\0\1\11\1\0\1\11\15\0\1\125\2\11"+
-    "\12\0\11\11\6\0\6\11\1\126\3\11\1\0\1\11"+
-    "\1\0\1\11\15\0\3\11\12\0\11\11\6\0\1\11"+
-    "\1\127\10\11\1\0\1\11\1\0\1\11\15\0\3\11"+
-    "\12\0\11\11\6\0\1\11\1\130\10\11\1\0\1\11"+
-    "\1\0\1\11\15\0\3\11\12\0\11\11\6\0\12\11"+
-    "\1\0\1\11\1\0\1\11\15\0\1\11\1\131\1\11"+
-    "\12\0\11\11\17\0\1\74\1\0\1\74\56\0\1\132"+
-    "\5\0\1\75\3\0\1\132\67\0\1\133\44\0\1\76"+
-    "\3\0\16\76\1\134\3\76\1\0\36\76\1\0\2\100"+
-    "\2\0\20\100\1\135\1\102\41\100\5\0\1\136\11\11"+
-    "\1\0\1\11\1\0\1\11\15\0\3\11\12\0\11\11"+
-    "\6\0\1\11\1\137\10\11\1\0\1\11\1\0\1\11"+
-    "\15\0\3\11\12\0\11\11\6\0\12\11\1\0\1\11"+
-    "\1\0\1\11\15\0\2\11\1\140\12\0\11\11\6\0"+
-    "\12\11\1\0\1\11\1\0\1\11\15\0\1\11\1\141"+
-    "\1\11\12\0\11\11\6\0\12\11\1\0\1\11\1\0"+
-    "\1\11\15\0\3\11\12\0\5\11\1\142\3\11\6\0"+
-    "\3\11\1\143\6\11\1\0\1\11\1\0\1\11\15\0"+
-    "\3\11\12\0\11\11\6\0\2\11\1\144\7\11\1\0"+
-    "\1\11\1\0\1\11\15\0\3\11\12\0\11\11\6\0"+
-    "\12\11\1\0\1\11\1\0\1\11\15\0\2\11\1\145"+
-    "\12\0\11\11\6\0\3\11\1\146\6\11\1\0\1\11"+
-    "\1\0\1\11\15\0\3\11\12\0\11\11\6\0\4\11"+
-    "\1\147\5\11\1\0\1\11\1\0\1\11\15\0\3\11"+
-    "\12\0\11\11\6\0\12\11\1\0\1\11\1\0\1\11"+
-    "\15\0\3\11\12\0\4\11\1\150\4\11\6\0\7\11"+
-    "\1\117\2\11\1\0\1\11\1\0\1\11\15\0\3\11"+
-    "\12\0\11\11\6\0\5\11\1\151\4\11\1\0\1\11"+
-    "\1\0\1\11\15\0\3\11\12\0\11\11\17\0\1\152"+
-    "\55\0\12\11\1\0\1\11\1\0\1\11\15\0\3\11"+
-    "\12\0\2\11\1\153\1\11\1\154\4\11\6\0\2\11"+
-    "\1\155\7\11\1\0\1\11\1\0\1\11\15\0\3\11"+
-    "\12\0\11\11\6\0\6\11\1\156\3\11\1\0\1\11"+
-    "\1\0\1\11\15\0\3\11\12\0\11\11\6\0\1\11"+
-    "\1\157\10\11\1\0\1\11\1\0\1\11\15\0\3\11"+
-    "\12\0\11\11\6\0\1\11\1\160\10\11\1\0\1\11"+
-    "\1\0\1\11\15\0\3\11\12\0\11\11\6\0\1\161"+
-    "\11\11\1\0\1\11\1\0\1\11\15\0\3\11\12\0"+
-    "\11\11\6\0\12\11\1\0\1\11\1\0\1\11\15\0"+
-    "\3\11\12\0\10\11\1\162\6\0\1\11\1\163\10\11"+
-    "\1\0\1\11\1\0\1\11\15\0\3\11\12\0\11\11"+
-    "\6\0\3\11\1\164\6\11\1\0\1\11\1\0\1\11"+
-    "\15\0\3\11\12\0\11\11\6\0\6\11\1\165\3\11"+
-    "\1\0\1\11\1\0\1\11\15\0\3\11\12\0\11\11"+
-    "\6\0\3\11\1\166\6\11\1\0\1\11\1\0\1\11"+
-    "\15\0\3\11\12\0\11\11\6\0\12\11\1\0\1\11"+
-    "\1\0\1\11\15\0\1\167\2\11\12\0\11\11\6\0"+
-    "\12\11\1\0\1\11\1\0\1\11\15\0\1\11\1\170"+
-    "\1\11\12\0\11\11\6\0\12\11\1\0\1\11\1\0"+
-    "\1\11\15\0\3\11\12\0\5\11\1\171\3\11\6\0"+
-    "\5\11\1\172\4\11\1\0\1\11\1\0\1\11\15\0"+
-    "\3\11\12\0\11\11\6\0\12\11\1\0\1\11\1\0"+
-    "\1\11\15\0\1\11\1\173\1\11\12\0\11\11\6\0"+
-    "\3\11\1\174\6\11\1\0\1\11\1\0\1\11\15\0"+
-    "\3\11\12\0\11\11\6\0\12\11\1\0\1\11\1\0"+
-    "\1\11\15\0\2\11\1\175\12\0\11\11\6\0\12\11"+
-    "\1\0\1\11\1\0\1\11\15\0\3\11\12\0\3\11"+
-    "\1\176\5\11\6\0\2\11\1\177\7\11\1\0\1\11"+
-    "\1\0\1\11\15\0\3\11\12\0\11\11\6\0\12\11"+
-    "\1\0\1\11\1\0\1\11\15\0\1\200\2\11\12\0"+
-    "\11\11\6\0\1\11\1\201\10\11\1\0\1\11\1\0"+
-    "\1\11\15\0\3\11\12\0\11\11\6\0\3\11\1\202"+
-    "\6\11\1\0\1\11\1\0\1\11\15\0\3\11\12\0"+
-    "\11\11\1\0";
+    "\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13"+
+    "\1\14\1\15\3\12\1\16\1\17\1\12\1\20\1\12"+
+    "\1\21\1\22\1\23\2\4\1\24\1\25\1\26\1\27"+
+    "\1\30\1\31\1\32\1\33\1\34\1\35\1\12\1\36"+
+    "\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46"+
+    "\1\47\1\50\1\51\1\52\1\53\1\12\1\54\1\12"+
+    "\1\55\1\56\2\12\1\5\1\57\1\60\65\57\1\61"+
+    "\70\4\71\0\1\62\1\63\1\7\20\0\1\62\42\0"+
+    "\1\62\2\0\1\64\71\0\1\12\1\65\10\12\1\0"+
+    "\1\12\1\0\1\12\16\0\2\12\1\66\13\0\11\12"+
+    "\5\0\3\12\1\67\6\12\1\0\1\12\1\0\1\12"+
+    "\16\0\3\12\13\0\11\12\5\0\12\12\1\0\1\12"+
+    "\1\0\1\12\16\0\3\12\13\0\11\12\5\0\6\12"+
+    "\1\70\3\12\1\0\1\12\1\0\1\12\16\0\1\71"+
+    "\2\12\13\0\11\12\5\0\2\12\1\72\2\12\1\73"+
+    "\4\12\1\0\1\12\1\0\1\12\16\0\2\12\1\74"+
+    "\13\0\11\12\5\0\1\12\1\75\5\12\1\76\2\12"+
+    "\1\0\1\12\1\0\1\12\16\0\1\77\2\12\13\0"+
+    "\11\12\16\0\1\16\1\0\1\100\1\101\64\0\1\16"+
+    "\67\0\1\101\52\0\3\102\1\0\17\102\2\0\1\103"+
+    "\42\102\3\104\1\0\17\104\1\105\1\0\1\106\42\104"+
+    "\52\0\1\107\21\0\12\12\1\0\1\12\1\0\1\12"+
+    "\16\0\2\12\1\110\13\0\11\12\5\0\1\12\1\111"+
+    "\2\12\1\112\5\12\1\0\1\12\1\0\1\12\16\0"+
+    "\3\12\13\0\11\12\53\0\1\113\67\0\1\114\67\0"+
+    "\1\115\21\0\5\12\1\116\4\12\1\0\1\12\1\0"+
+    "\1\12\16\0\3\12\13\0\11\12\5\0\1\12\1\117"+
+    "\10\12\1\0\1\12\1\0\1\12\16\0\3\12\13\0"+
+    "\11\12\5\0\12\12\1\0\1\12\1\0\1\12\16\0"+
+    "\2\12\1\120\13\0\11\12\5\0\4\12\1\121\5\12"+
+    "\1\0\1\12\1\0\1\12\16\0\3\12\13\0\11\12"+
+    "\5\0\12\12\1\0\1\12\1\0\1\12\16\0\3\12"+
+    "\13\0\7\12\1\122\1\12\1\0\3\64\1\0\64\64"+
+    "\4\0\2\12\1\123\7\12\1\0\1\12\1\0\1\12"+
+    "\16\0\3\12\13\0\11\12\5\0\1\124\11\12\1\0"+
+    "\1\12\1\0\1\12\16\0\3\12\13\0\4\12\1\125"+
+    "\4\12\5\0\7\12\1\126\2\12\1\0\1\12\1\0"+
+    "\1\12\16\0\3\12\13\0\5\12\1\127\3\12\5\0"+
+    "\12\12\1\0\1\12\1\0\1\12\16\0\1\12\1\130"+
+    "\1\12\13\0\11\12\5\0\12\12\1\0\1\12\1\0"+
+    "\1\12\16\0\1\131\2\12\13\0\11\12\5\0\6\12"+
+    "\1\132\3\12\1\0\1\12\1\0\1\12\16\0\3\12"+
+    "\13\0\11\12\5\0\1\12\1\133\10\12\1\0\1\12"+
+    "\1\0\1\12\16\0\3\12\13\0\11\12\5\0\1\12"+
+    "\1\134\10\12\1\0\1\12\1\0\1\12\16\0\3\12"+
+    "\13\0\11\12\5\0\12\12\1\0\1\12\1\0\1\12"+
+    "\16\0\1\12\1\135\1\12\13\0\11\12\16\0\1\100"+
+    "\1\0\1\100\57\0\1\136\5\0\1\101\3\0\1\136"+
+    "\70\0\1\137\47\0\1\102\1\0\16\102\1\140\1\102"+
+    "\1\0\42\102\1\0\3\104\1\0\17\104\1\141\1\0"+
+    "\1\106\42\104\4\0\1\142\11\12\1\0\1\12\1\0"+
+    "\1\12\16\0\3\12\13\0\11\12\5\0\1\12\1\143"+
+    "\10\12\1\0\1\12\1\0\1\12\16\0\3\12\13\0"+
+    "\11\12\5\0\12\12\1\0\1\12\1\0\1\12\16\0"+
+    "\2\12\1\144\13\0\11\12\5\0\12\12\1\0\1\12"+
+    "\1\0\1\12\16\0\1\12\1\145\1\12\13\0\11\12"+
+    "\5\0\12\12\1\0\1\12\1\0\1\12\16\0\3\12"+
+    "\13\0\5\12\1\146\3\12\5\0\3\12\1\147\6\12"+
+    "\1\0\1\12\1\0\1\12\16\0\3\12\13\0\11\12"+
+    "\5\0\2\12\1\150\7\12\1\0\1\12\1\0\1\12"+
+    "\16\0\3\12\13\0\11\12\5\0\12\12\1\0\1\12"+
+    "\1\0\1\12\16\0\2\12\1\151\13\0\11\12\5\0"+
+    "\3\12\1\152\6\12\1\0\1\12\1\0\1\12\16\0"+
+    "\3\12\13\0\11\12\5\0\4\12\1\153\5\12\1\0"+
+    "\1\12\1\0\1\12\16\0\3\12\13\0\11\12\5\0"+
+    "\12\12\1\0\1\12\1\0\1\12\16\0\3\12\13\0"+
+    "\4\12\1\154\4\12\5\0\7\12\1\123\2\12\1\0"+
+    "\1\12\1\0\1\12\16\0\3\12\13\0\11\12\5\0"+
+    "\5\12\1\155\4\12\1\0\1\12\1\0\1\12\16\0"+
+    "\3\12\13\0\11\12\16\0\1\156\56\0\12\12\1\0"+
+    "\1\12\1\0\1\12\16\0\3\12\13\0\2\12\1\157"+
+    "\1\12\1\160\4\12\5\0\2\12\1\161\7\12\1\0"+
+    "\1\12\1\0\1\12\16\0\3\12\13\0\11\12\5\0"+
+    "\6\12\1\162\3\12\1\0\1\12\1\0\1\12\16\0"+
+    "\3\12\13\0\11\12\5\0\1\12\1\163\10\12\1\0"+
+    "\1\12\1\0\1\12\16\0\3\12\13\0\11\12\5\0"+
+    "\1\12\1\164\10\12\1\0\1\12\1\0\1\12\16\0"+
+    "\3\12\13\0\11\12\5\0\1\165\11\12\1\0\1\12"+
+    "\1\0\1\12\16\0\3\12\13\0\11\12\5\0\12\12"+
+    "\1\0\1\12\1\0\1\12\16\0\3\12\13\0\10\12"+
+    "\1\166\5\0\1\12\1\167\10\12\1\0\1\12\1\0"+
+    "\1\12\16\0\3\12\13\0\11\12\5\0\3\12\1\170"+
+    "\6\12\1\0\1\12\1\0\1\12\16\0\3\12\13\0"+
+    "\11\12\5\0\6\12\1\171\3\12\1\0\1\12\1\0"+
+    "\1\12\16\0\3\12\13\0\11\12\5\0\3\12\1\172"+
+    "\6\12\1\0\1\12\1\0\1\12\16\0\3\12\13\0"+
+    "\11\12\5\0\12\12\1\0\1\12\1\0\1\12\16\0"+
+    "\1\173\2\12\13\0\11\12\5\0\12\12\1\0\1\12"+
+    "\1\0\1\12\16\0\1\12\1\174\1\12\13\0\11\12"+
+    "\5\0\12\12\1\0\1\12\1\0\1\12\16\0\3\12"+
+    "\13\0\5\12\1\175\3\12\5\0\5\12\1\176\4\12"+
+    "\1\0\1\12\1\0\1\12\16\0\3\12\13\0\11\12"+
+    "\5\0\12\12\1\0\1\12\1\0\1\12\16\0\1\12"+
+    "\1\177\1\12\13\0\11\12\5\0\3\12\1\200\6\12"+
+    "\1\0\1\12\1\0\1\12\16\0\3\12\13\0\11\12"+
+    "\5\0\12\12\1\0\1\12\1\0\1\12\16\0\2\12"+
+    "\1\201\13\0\11\12\5\0\12\12\1\0\1\12\1\0"+
+    "\1\12\16\0\3\12\13\0\3\12\1\202\5\12\5\0"+
+    "\2\12\1\203\7\12\1\0\1\12\1\0\1\12\16\0"+
+    "\3\12\13\0\11\12\5\0\12\12\1\0\1\12\1\0"+
+    "\1\12\16\0\1\204\2\12\13\0\11\12\5\0\1\12"+
+    "\1\205\10\12\1\0\1\12\1\0\1\12\16\0\3\12"+
+    "\13\0\11\12\5\0\3\12\1\206\6\12\1\0\1\12"+
+    "\1\0\1\12\16\0\3\12\13\0\11\12\1\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[4345];
+    int [] result = new int[4480];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -293,13 +296,13 @@ public class PyPasLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\2\0\1\11\1\1\1\11\15\1\6\11\1\1\1\11"+
-    "\2\1\4\11\1\1\2\11\10\1\3\11\1\1\1\0"+
-    "\15\1\3\0\1\11\1\0\1\11\3\1\3\11\20\1"+
-    "\1\0\1\11\47\1";
+    "\3\0\1\11\2\1\1\11\14\1\6\11\1\1\2\11"+
+    "\2\1\4\11\1\1\3\11\10\1\3\11\2\0\16\1"+
+    "\3\0\1\11\1\0\1\11\3\1\3\11\20\1\1\0"+
+    "\1\11\47\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[130];
+    int [] result = new int[134];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -361,6 +364,11 @@ public class PyPasLexer implements FlexLexer {
     private boolean atBeginningOfTheLine = true;
     private Deque<Integer> indentStack = new ArrayDeque<Integer>();
     private int currentIndent = 0;
+    protected boolean stillHasWorkToDo() {
+        return
+            !indentStack.isEmpty();
+    }
+
     boolean checkBol() {
         if (atBeginningOfTheLine) {
             atBeginningOfTheLine = false;
@@ -372,12 +380,18 @@ public class PyPasLexer implements FlexLexer {
         return false;
     }
 
-    IElementType drainIndentStack() {
-        if (!indentStack.isEmpty()) {
+    protected IElementType drainIndentStack() {
+        if (!indentStack.isEmpty()) { // in all other cases, just roll ROLLBACK states
             indentStack.pop();
             yypushback(yylength());
+            if (zzState == IN_INDENT_STACK_ROLLBACK) {
+                yybegin(IN_INDENT_STACK_ROLLBACK1);
+            } else  {
+                yybegin(IN_INDENT_STACK_ROLLBACK);
+            }
             return UNINDENT;
         }
+        yybegin(IN_FINAL);
         return null;
     }
 
@@ -662,18 +676,7 @@ public class PyPasLexer implements FlexLexer {
 
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
-        switch (zzLexicalState) {
-            case YYINITIAL: {
-              return drainIndentStack();
-            }  // fall though
-            case 131: break;
-            case IN_INDENT: {
-              return drainIndentStack();
-            }  // fall though
-            case 132: break;
-            default:
         return null;
-        }
       }
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
@@ -681,288 +684,301 @@ public class PyPasLexer implements FlexLexer {
             { return BAD_CHARACTER;
             } 
             // fall through
-          case 58: break;
-          case 2: 
-            { if (!checkBol()) { return DIV; }
-            } 
-            // fall through
-          case 59: break;
-          case 3: 
-            { atBeginningOfTheLine = true;
-                             return WHITE_SPACE;
-            } 
-            // fall through
           case 60: break;
-          case 4: 
-            { if (!checkBol()) { return IDENT; }
-            } 
-            // fall through
-          case 61: break;
-          case 5: 
-            { if (!checkBol()) { return INTEGER; }
-            } 
-            // fall through
-          case 62: break;
-          case 6: 
-            { if (!checkBol()) { return MINUS; }
-            } 
-            // fall through
-          case 63: break;
-          case 7: 
-            { if (!checkBol()) { return DOT; }
-            } 
-            // fall through
-          case 64: break;
-          case 8: 
+          case 2: 
             { if (!checkBol()) { return WHITE_SPACE; }
             } 
             // fall through
+          case 61: break;
+          case 3: 
+            { if (!checkBol()) { return DIV; }
+            } 
+            // fall through
+          case 62: break;
+          case 4: 
+            { if (atBeginningOfTheLine) {
+                                 return WHITE_SPACE;
+                             }
+                             atBeginningOfTheLine = true;
+                             return NEW_LINE;
+            } 
+            // fall through
+          case 63: break;
+          case 5: 
+            { if (!checkBol()) { return IDENT; }
+            } 
+            // fall through
+          case 64: break;
+          case 6: 
+            { if (!checkBol()) { return INTEGER; }
+            } 
+            // fall through
           case 65: break;
+          case 7: 
+            { if (!checkBol()) { return MINUS; }
+            } 
+            // fall through
+          case 66: break;
+          case 8: 
+            { if (!checkBol()) { return DOT; }
+            } 
+            // fall through
+          case 67: break;
           case 9: 
             { if (!checkBol()) { return PARENTHESISL; }
             } 
             // fall through
-          case 66: break;
+          case 68: break;
           case 10: 
             { if (!checkBol()) { return PARENTHESISR; }
             } 
             // fall through
-          case 67: break;
+          case 69: break;
           case 11: 
             { if (!checkBol()) { return BRACKETL; }
             } 
             // fall through
-          case 68: break;
+          case 70: break;
           case 12: 
             { if (!checkBol()) { return BRACKETR; }
             } 
             // fall through
-          case 69: break;
+          case 71: break;
           case 13: 
             { if (!checkBol()) { return BRACEL; }
             } 
             // fall through
-          case 70: break;
+          case 72: break;
           case 14: 
             { if (!checkBol()) { return BRACER; }
             } 
             // fall through
-          case 71: break;
+          case 73: break;
           case 15: 
             { if (!checkBol()) { return COLON; }
             } 
             // fall through
-          case 72: break;
-          case 16: 
-            { if (!checkBol()) { return COMMA; }
-            } 
-            // fall through
-          case 73: break;
-          case 17: 
-            { if (!checkBol()) { return BITWISE_AND; }
-            } 
-            // fall through
           case 74: break;
-          case 18: 
-            { if (!checkBol()) { return BITWISE_OR; }
+          case 16: 
+            { if (!checkBol()) { return SEMICOLON; }
             } 
             // fall through
           case 75: break;
-          case 19: 
-            { if (!checkBol()) { return BITWISE_NOT; }
+          case 17: 
+            { if (!checkBol()) { return COMMA; }
             } 
             // fall through
           case 76: break;
-          case 20: 
-            { if (!checkBol()) { return BITWISE_XOR; }
+          case 18: 
+            { if (!checkBol()) { return BITWISE_AND; }
             } 
             // fall through
           case 77: break;
-          case 21: 
-            { if (!checkBol()) { return PLUS; }
+          case 19: 
+            { if (!checkBol()) { return BITWISE_OR; }
             } 
             // fall through
           case 78: break;
-          case 22: 
-            { if (!checkBol()) { return MUL; }
+          case 20: 
+            { if (!checkBol()) { return BITWISE_NOT; }
             } 
             // fall through
           case 79: break;
-          case 23: 
-            { if (!checkBol()) { return EQ_OP; }
+          case 21: 
+            { if (!checkBol()) { return BITWISE_XOR; }
             } 
             // fall through
           case 80: break;
-          case 24: 
-            { if (!checkBol()) { return LT_OP; }
+          case 22: 
+            { if (!checkBol()) { return PLUS; }
             } 
             // fall through
           case 81: break;
-          case 25: 
-            { if (!checkBol()) { return HT_OP; }
+          case 23: 
+            { if (!checkBol()) { return MOD; }
             } 
             // fall through
           case 82: break;
-          case 26: 
-            { return handleIndentUnindent();
+          case 24: 
+            { if (!checkBol()) { return MUL; }
             } 
             // fall through
           case 83: break;
-          case 27: 
-            { currentIndent += 4;
+          case 25: 
+            { if (!checkBol()) { return EQ_OP; }
             } 
             // fall through
           case 84: break;
-          case 28: 
-            { currentIndent ++;
+          case 26: 
+            { if (!checkBol()) { return LT_OP; }
             } 
             // fall through
           case 85: break;
-          case 29: 
-            { if (!checkBol()) { return COMMENT; }
+          case 27: 
+            { if (!checkBol()) { return HT_OP; }
             } 
             // fall through
           case 86: break;
-          case 30: 
-            { if (!checkBol()) { return TO; }
+          case 28: 
+            { return handleIndentUnindent();
             } 
             // fall through
           case 87: break;
-          case 31: 
-            { if (!checkBol()) { return AS; }
+          case 29: 
+            { currentIndent += 4;
             } 
             // fall through
           case 88: break;
-          case 32: 
-            { if (!checkBol()) { return FLOAT; }
+          case 30: 
+            { currentIndent ++;
             } 
             // fall through
           case 89: break;
-          case 33: 
-            { if (!checkBol()) { return STRING; }
+          case 31: 
+            { return COMMENT;
             } 
             // fall through
           case 90: break;
-          case 34: 
-            { if (!checkBol()) { return ASSIGNMENT_OP; }
+          case 32: 
+            { if (!checkBol()) { return TO; }
             } 
             // fall through
           case 91: break;
-          case 35: 
-            { if (!checkBol()) { return OR; }
+          case 33: 
+            { if (!checkBol()) { return AS; }
             } 
             // fall through
           case 92: break;
-          case 36: 
-            { if (!checkBol()) { return OF; }
+          case 34: 
+            { if (!checkBol()) { return FLOAT; }
             } 
             // fall through
           case 93: break;
-          case 37: 
-            { if (!checkBol()) { return NEQ_OP; }
+          case 35: 
+            { if (!checkBol()) { return STRING; }
             } 
             // fall through
           case 94: break;
-          case 38: 
-            { if (!checkBol()) { return LTEQ_OP; }
+          case 36: 
+            { if (!checkBol()) { return ASSIGNMENT_OP; }
             } 
             // fall through
           case 95: break;
-          case 39: 
-            { if (!checkBol()) { return HTEQ_OP; }
+          case 37: 
+            { if (!checkBol()) { return OR; }
             } 
             // fall through
           case 96: break;
-          case 40: 
-            { if (!checkBol()) { return IF; }
+          case 38: 
+            { if (!checkBol()) { return OF; }
             } 
             // fall through
           case 97: break;
-          case 41: 
-            { if (!checkBol()) { return END; }
+          case 39: 
+            { if (!checkBol()) { return NEQ_OP; }
             } 
             // fall through
           case 98: break;
-          case 42: 
-            { if (!checkBol()) { return FOR; }
+          case 40: 
+            { if (!checkBol()) { return LTEQ_OP; }
             } 
             // fall through
           case 99: break;
-          case 43: 
-            { if (!checkBol()) { return AND; }
+          case 41: 
+            { if (!checkBol()) { return HTEQ_OP; }
             } 
             // fall through
           case 100: break;
-          case 44: 
-            { if (!checkBol()) { return CHAR; }
+          case 42: 
+            { if (!checkBol()) { return IF; }
             } 
             // fall through
           case 101: break;
-          case 45: 
-            { if (!checkBol()) { return NOT; }
+          case 43: 
+            { if (!checkBol()) { return END; }
             } 
             // fall through
           case 102: break;
-          case 46: 
-            { if (!checkBol()) { return VAR; }
+          case 44: 
+            { if (!checkBol()) { return FOR; }
             } 
             // fall through
           case 103: break;
-          case 47: 
-            { if (!checkBol()) { return BOOLEAN; }
+          case 45: 
+            { if (!checkBol()) { return AND; }
             } 
             // fall through
           case 104: break;
-          case 48: 
-            { if (!checkBol()) { return ELSE; }
+          case 46: 
+            { if (!checkBol()) { return CHAR; }
             } 
             // fall through
           case 105: break;
-          case 49: 
-            { if (!checkBol()) { return ELIF; }
+          case 47: 
+            { if (!checkBol()) { return NOT; }
             } 
             // fall through
           case 106: break;
-          case 50: 
-            { if (!checkBol()) { return ARRAY; }
+          case 48: 
+            { if (!checkBol()) { return VAR; }
             } 
             // fall through
           case 107: break;
-          case 51: 
-            { if (!checkBol()) { return WHILE; }
+          case 49: 
+            { if (!checkBol()) { return BOOLEAN; }
             } 
             // fall through
           case 108: break;
-          case 52: 
-            { if (!checkBol()) { return RETURN; }
+          case 50: 
+            { if (!checkBol()) { return ELSE; }
             } 
             // fall through
           case 109: break;
-          case 53: 
-            { if (!checkBol()) { return RECORD; }
+          case 51: 
+            { if (!checkBol()) { return ELIF; }
             } 
             // fall through
           case 110: break;
-          case 54: 
-            { if (!checkBol()) { return MODULE; }
+          case 52: 
+            { if (!checkBol()) { return ARRAY; }
             } 
             // fall through
           case 111: break;
-          case 55: 
-            { if (!checkBol()) { return PROGRAM; }
+          case 53: 
+            { if (!checkBol()) { return WHILE; }
             } 
             // fall through
           case 112: break;
-          case 56: 
-            { if (!checkBol()) { return FUNCTION; }
+          case 54: 
+            { if (!checkBol()) { return RETURN; }
             } 
             // fall through
           case 113: break;
-          case 57: 
-            { if (!checkBol()) { return PROCEDURE; }
+          case 55: 
+            { if (!checkBol()) { return RECORD; }
             } 
             // fall through
           case 114: break;
+          case 56: 
+            { if (!checkBol()) { return MODULE; }
+            } 
+            // fall through
+          case 115: break;
+          case 57: 
+            { if (!checkBol()) { return PROGRAM; }
+            } 
+            // fall through
+          case 116: break;
+          case 58: 
+            { if (!checkBol()) { return FUNCTION; }
+            } 
+            // fall through
+          case 117: break;
+          case 59: 
+            { if (!checkBol()) { return PROCEDURE; }
+            } 
+            // fall through
+          case 118: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

@@ -5,9 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface PyPasBitNotExpr extends PsiElement {
+public interface PyPasArgDefinition extends PsiElement {
 
   @NotNull
-  PyPasMulDivModExpr getMulDivModExpr();
+  PyPasTypeDefinition getTypeDefinition();
+
+  @NotNull
+  PsiElement getIdent();
 
 }

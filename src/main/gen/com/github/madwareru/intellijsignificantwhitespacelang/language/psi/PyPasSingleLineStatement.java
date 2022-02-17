@@ -5,18 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface PyPasStatement extends PsiElement {
+public interface PyPasSingleLineStatement extends PsiElement {
 
   @Nullable
-  PyPasForStatement getForStatement();
+  PyPasAssignmentStatement getAssignmentStatement();
 
   @Nullable
-  PyPasIfStatement getIfStatement();
-
-  @NotNull
-  List<PyPasSingleLineStatement> getSingleLineStatementList();
+  PyPasFunctionInvocation getFunctionInvocation();
 
   @Nullable
-  PyPasWhileStatement getWhileStatement();
+  PyPasReturnStatement getReturnStatement();
 
 }
