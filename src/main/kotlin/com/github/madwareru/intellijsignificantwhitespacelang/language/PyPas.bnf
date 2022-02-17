@@ -58,10 +58,10 @@
             LTEQ_OP = "<="
             HTEQ_OP = ">="
             VAR = "var"
-            PROGRAM = "program"
-            MODULE = "module"
-            FUNCTION = "function"
-            PROCEDURE = "procedure"
+            LET = "let"
+            MODULE = "mod"
+            FUNCTION = "fn"
+            PROCEDURE = "proc"
             IF = "if"
             ELIF = "elif"
             ELSE = "else"
@@ -78,16 +78,19 @@
 }
 
 PyPas ::= program_header definitions
-program_header ::= (PROGRAM | MODULE) IDENT
+program_header ::= MODULE IDENT
 definitions ::= COLON NEW_LINE INDENT definition+ UNINDENT
 definition ::= proc_define | func_define | record_define
 proc_define ::= PROCEDURE IDENT PARENTHESISL [arg_defs] PARENTHESISR block_statements_body
 func_define ::= FUNCTION IDENT PARENTHESISL [arg_defs] PARENTHESISR MINUS HT_OP IDENT block_statements_body
-block_statements_body ::= COLON NEW_LINE INDENT [var_block] [statements] UNINDENT
-var_block ::= VAR NEW_LINE INDENT var_definitions UNINDENT
-var_definitions ::= var_definition+
-var_definition ::= IDENT COLON type_definition NEW_LINE
-arg_definition ::= IDENT COLON type_definition
+block_statements_body ::= COLON NEW_LINE INDENT [statements] UNINDENT
+var_definitions ::= (var_definition NEW_LINE)+
+var_definitions_single_line ::= var_definition (COMMA var_definition)*
+let_definitions ::= (let_definition NEW_LINE)+
+let_definitions_single_line ::= let_definition (COMMA let_definition)*
+var_definition ::= IDENT COLON type_definition [ASSIGNMENT_OP logic_and_expr]
+let_definition ::= IDENT COLON type_definition ASSIGNMENT_OP logic_and_expr
+arg_definition ::= IDENT COLON type_definition [EQ_OP logic_and_expr]
 type_definition ::= simple_type_definition | array_type_definition
 simple_type_definition ::= IDENT
 array_type_definition ::= ARRAY BRACKETL INTEGER TO INTEGER BRACKETR OF IDENT
@@ -96,12 +99,20 @@ statement ::= (single_line_statement (SEMICOLON single_line_statement)* NEW_LINE
     | if_statement
     | for_statement
     | while_statement
+    | var_statement
+    | let_statement
 
-single_line_statement ::= assignment_statement | function_invocation | return_statement
+single_line_statement ::= assignment_statement | function_invocation | return_statement | var_statement_single_line | let_statement_single_line
 
 if_statement ::= IF logic_and_expr block_statements_body
     (ELIF logic_and_expr block_statements_body)*
     (ELSE block_statements_body)?
+
+var_statement ::= VAR NEW_LINE INDENT var_definitions UNINDENT
+var_statement_single_line ::= VAR var_definitions_single_line
+
+let_statement ::= LET NEW_LINE INDENT let_definitions UNINDENT
+let_statement_single_line ::= LET let_definitions_single_line
 
 for_statement ::= FOR IDENT ASSIGNMENT_OP constant_literal to constant_literal block_statements_body
 while_statement ::= WHILE logic_and_expr block_statements_body

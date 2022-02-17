@@ -33,10 +33,4 @@ public class PyPasBlockStatementsBodyImpl extends ASTWrapperPsiElement implement
     return findChildByClass(PyPasStatements.class);
   }
 
-  @Override
-  @Nullable
-  public PyPasVarBlock getVarBlock() {
-    return findChildByClass(PyPasVarBlock.class);
-  }
-
 }

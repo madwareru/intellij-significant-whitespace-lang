@@ -28,6 +28,12 @@ public class PyPasArgDefinitionImpl extends ASTWrapperPsiElement implements PyPa
   }
 
   @Override
+  @Nullable
+  public PyPasLogicAndExpr getLogicAndExpr() {
+    return findChildByClass(PyPasLogicAndExpr.class);
+  }
+
+  @Override
   @NotNull
   public PyPasTypeDefinition getTypeDefinition() {
     return findNotNullChildByClass(PyPasTypeDefinition.class);

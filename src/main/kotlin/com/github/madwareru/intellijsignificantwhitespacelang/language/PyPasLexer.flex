@@ -39,7 +39,7 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
     }
 
     protected IElementType drainIndentStack() {
-        if (!indentStack.isEmpty()) { // in all other cases, just roll ROLLBACK states
+        if (!indentStack.isEmpty()) {
             indentStack.pop();
             yypushback(yylength());
             if (zzState == IN_INDENT_STACK_ROLLBACK) {
@@ -77,6 +77,11 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
         if ((topIndent - currentIndent) >= 4) {
             indentStack.pop();
             yypushback(yylength());
+            if(zzState == IN_INDENT) {
+                yybegin(IN_INDENT1);
+            } else {
+                yybegin(IN_INDENT);
+            }
             return UNINDENT;
         }
         yypushback(yylength());
@@ -101,6 +106,7 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
 %type IElementType
 
 %s IN_INDENT
+%s IN_INDENT1
 %s IN_INDENT_STACK_ROLLBACK
 %s IN_INDENT_STACK_ROLLBACK1
 %s IN_FINAL
@@ -156,10 +162,10 @@ STRING=\"([^\r\n\"]|(\\[\S]))*\"
     "<="                 { if (!checkBol()) { return LTEQ_OP; } }
     ">="                 { if (!checkBol()) { return HTEQ_OP; } }
     "var"                { if (!checkBol()) { return VAR; } }
-    "program"            { if (!checkBol()) { return PROGRAM; } }
-    "module"             { if (!checkBol()) { return MODULE; } }
-    "function"           { if (!checkBol()) { return FUNCTION; } }
-    "procedure"          { if (!checkBol()) { return PROCEDURE; } }
+    "let"                { if (!checkBol()) { return LET; } }
+    "mod"                { if (!checkBol()) { return MODULE; } }
+    "fn"                 { if (!checkBol()) { return FUNCTION; } }
+    "proc"               { if (!checkBol()) { return PROCEDURE; } }
     "if"                 { if (!checkBol()) { return IF; } }
     "elif"               { if (!checkBol()) { return ELIF; } }
     "else"               { if (!checkBol()) { return ELSE; } }
@@ -181,7 +187,7 @@ STRING=\"([^\r\n\"]|(\\[\S]))*\"
     {STRING}             { if (!checkBol()) { return STRING; } }
 }
 
-<IN_INDENT> {
+<IN_INDENT, IN_INDENT1> {
     " "         { currentIndent ++; }
     \t          { currentIndent += 4; }
     [^]         { return handleIndentUnindent(); }

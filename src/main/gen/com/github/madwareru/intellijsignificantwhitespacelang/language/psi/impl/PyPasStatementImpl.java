@@ -40,9 +40,21 @@ public class PyPasStatementImpl extends ASTWrapperPsiElement implements PyPasSta
   }
 
   @Override
+  @Nullable
+  public PyPasLetStatement getLetStatement() {
+    return findChildByClass(PyPasLetStatement.class);
+  }
+
+  @Override
   @NotNull
   public List<PyPasSingleLineStatement> getSingleLineStatementList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, PyPasSingleLineStatement.class);
+  }
+
+  @Override
+  @Nullable
+  public PyPasVarStatement getVarStatement() {
+    return findChildByClass(PyPasVarStatement.class);
   }
 
   @Override

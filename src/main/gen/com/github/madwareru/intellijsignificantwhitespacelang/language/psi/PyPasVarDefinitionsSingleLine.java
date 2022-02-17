@@ -5,9 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface PyPasBlockStatementsBody extends PsiElement {
+public interface PyPasVarDefinitionsSingleLine extends PsiElement {
 
-  @Nullable
-  PyPasStatements getStatements();
+  @NotNull
+  List<PyPasVarDefinition> getVarDefinitionList();
 
 }

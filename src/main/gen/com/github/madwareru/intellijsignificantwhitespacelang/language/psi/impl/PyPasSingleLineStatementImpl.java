@@ -41,8 +41,20 @@ public class PyPasSingleLineStatementImpl extends ASTWrapperPsiElement implement
 
   @Override
   @Nullable
+  public PyPasLetStatementSingleLine getLetStatementSingleLine() {
+    return findChildByClass(PyPasLetStatementSingleLine.class);
+  }
+
+  @Override
+  @Nullable
   public PyPasReturnStatement getReturnStatement() {
     return findChildByClass(PyPasReturnStatement.class);
+  }
+
+  @Override
+  @Nullable
+  public PyPasVarStatementSingleLine getVarStatementSingleLine() {
+    return findChildByClass(PyPasVarStatementSingleLine.class);
   }
 
 }

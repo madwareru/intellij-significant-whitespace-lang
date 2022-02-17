@@ -13,8 +13,14 @@ public interface PyPasStatement extends PsiElement {
   @Nullable
   PyPasIfStatement getIfStatement();
 
+  @Nullable
+  PyPasLetStatement getLetStatement();
+
   @NotNull
   List<PyPasSingleLineStatement> getSingleLineStatementList();
+
+  @Nullable
+  PyPasVarStatement getVarStatement();
 
   @Nullable
   PyPasWhileStatement getWhileStatement();

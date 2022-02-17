@@ -5,9 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface PyPasBlockStatementsBody extends PsiElement {
+public interface PyPasLetDefinition extends PsiElement {
 
-  @Nullable
-  PyPasStatements getStatements();
+  @NotNull
+  PyPasLogicAndExpr getLogicAndExpr();
+
+  @NotNull
+  PyPasTypeDefinition getTypeDefinition();
+
+  @NotNull
+  PsiElement getIdent();
 
 }

@@ -14,6 +14,12 @@ public interface PyPasSingleLineStatement extends PsiElement {
   PyPasFunctionInvocation getFunctionInvocation();
 
   @Nullable
+  PyPasLetStatementSingleLine getLetStatementSingleLine();
+
+  @Nullable
   PyPasReturnStatement getReturnStatement();
+
+  @Nullable
+  PyPasVarStatementSingleLine getVarStatementSingleLine();
 
 }

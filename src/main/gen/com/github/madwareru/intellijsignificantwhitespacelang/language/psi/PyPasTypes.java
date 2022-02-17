@@ -26,6 +26,11 @@ public interface PyPasTypes {
   IElementType FUNC_DEFINE = new PyPasElementType("FUNC_DEFINE");
   IElementType IF_STATEMENT = new PyPasElementType("IF_STATEMENT");
   IElementType INDEXED_ACCESS = new PyPasElementType("INDEXED_ACCESS");
+  IElementType LET_DEFINITION = new PyPasElementType("LET_DEFINITION");
+  IElementType LET_DEFINITIONS = new PyPasElementType("LET_DEFINITIONS");
+  IElementType LET_DEFINITIONS_SINGLE_LINE = new PyPasElementType("LET_DEFINITIONS_SINGLE_LINE");
+  IElementType LET_STATEMENT = new PyPasElementType("LET_STATEMENT");
+  IElementType LET_STATEMENT_SINGLE_LINE = new PyPasElementType("LET_STATEMENT_SINGLE_LINE");
   IElementType LOGIC_AND_EXPR = new PyPasElementType("LOGIC_AND_EXPR");
   IElementType LOGIC_NOT_EXPR = new PyPasElementType("LOGIC_NOT_EXPR");
   IElementType LOGIC_OR_EXPR = new PyPasElementType("LOGIC_OR_EXPR");
@@ -45,9 +50,11 @@ public interface PyPasTypes {
   IElementType TERM_EXPR = new PyPasElementType("TERM_EXPR");
   IElementType TYPE_DEFINITION = new PyPasElementType("TYPE_DEFINITION");
   IElementType VARIABLE_ACCESS = new PyPasElementType("VARIABLE_ACCESS");
-  IElementType VAR_BLOCK = new PyPasElementType("VAR_BLOCK");
   IElementType VAR_DEFINITION = new PyPasElementType("VAR_DEFINITION");
   IElementType VAR_DEFINITIONS = new PyPasElementType("VAR_DEFINITIONS");
+  IElementType VAR_DEFINITIONS_SINGLE_LINE = new PyPasElementType("VAR_DEFINITIONS_SINGLE_LINE");
+  IElementType VAR_STATEMENT = new PyPasElementType("VAR_STATEMENT");
+  IElementType VAR_STATEMENT_SINGLE_LINE = new PyPasElementType("VAR_STATEMENT_SINGLE_LINE");
   IElementType WHILE_STATEMENT = new PyPasElementType("WHILE_STATEMENT");
 
   IElementType AND = new PyPasTokenType("and");
@@ -75,18 +82,19 @@ public interface PyPasTypes {
   IElementType EQ_OP = new PyPasTokenType("=");
   IElementType FLOAT = new PyPasTokenType("FLOAT");
   IElementType FOR = new PyPasTokenType("for");
-  IElementType FUNCTION = new PyPasTokenType("function");
+  IElementType FUNCTION = new PyPasTokenType("fn");
   IElementType HTEQ_OP = new PyPasTokenType(">=");
   IElementType HT_OP = new PyPasTokenType(">");
   IElementType IDENT = new PyPasTokenType("IDENT");
   IElementType IF = new PyPasTokenType("if");
   IElementType INDENT = new PyPasTokenType("INDENT");
   IElementType INTEGER = new PyPasTokenType("INTEGER");
+  IElementType LET = new PyPasTokenType("let");
   IElementType LTEQ_OP = new PyPasTokenType("<=");
   IElementType LT_OP = new PyPasTokenType("<");
   IElementType MINUS = new PyPasTokenType("-");
   IElementType MOD = new PyPasTokenType("%");
-  IElementType MODULE = new PyPasTokenType("module");
+  IElementType MODULE = new PyPasTokenType("mod");
   IElementType MUL = new PyPasTokenType("*");
   IElementType NEQ_OP = new PyPasTokenType("!=");
   IElementType NEW_LINE = new PyPasTokenType("NEW_LINE");
@@ -96,8 +104,7 @@ public interface PyPasTypes {
   IElementType PARENTHESISL = new PyPasTokenType("(");
   IElementType PARENTHESISR = new PyPasTokenType(")");
   IElementType PLUS = new PyPasTokenType("+");
-  IElementType PROCEDURE = new PyPasTokenType("procedure");
-  IElementType PROGRAM = new PyPasTokenType("program");
+  IElementType PROCEDURE = new PyPasTokenType("proc");
   IElementType RECORD = new PyPasTokenType("record");
   IElementType RETURN = new PyPasTokenType("return");
   IElementType SEMICOLON = new PyPasTokenType(";");
@@ -165,6 +172,21 @@ public interface PyPasTypes {
       else if (type == INDEXED_ACCESS) {
         return new PyPasIndexedAccessImpl(node);
       }
+      else if (type == LET_DEFINITION) {
+        return new PyPasLetDefinitionImpl(node);
+      }
+      else if (type == LET_DEFINITIONS) {
+        return new PyPasLetDefinitionsImpl(node);
+      }
+      else if (type == LET_DEFINITIONS_SINGLE_LINE) {
+        return new PyPasLetDefinitionsSingleLineImpl(node);
+      }
+      else if (type == LET_STATEMENT) {
+        return new PyPasLetStatementImpl(node);
+      }
+      else if (type == LET_STATEMENT_SINGLE_LINE) {
+        return new PyPasLetStatementSingleLineImpl(node);
+      }
       else if (type == LOGIC_AND_EXPR) {
         return new PyPasLogicAndExprImpl(node);
       }
@@ -222,14 +244,20 @@ public interface PyPasTypes {
       else if (type == VARIABLE_ACCESS) {
         return new PyPasVariableAccessImpl(node);
       }
-      else if (type == VAR_BLOCK) {
-        return new PyPasVarBlockImpl(node);
-      }
       else if (type == VAR_DEFINITION) {
         return new PyPasVarDefinitionImpl(node);
       }
       else if (type == VAR_DEFINITIONS) {
         return new PyPasVarDefinitionsImpl(node);
+      }
+      else if (type == VAR_DEFINITIONS_SINGLE_LINE) {
+        return new PyPasVarDefinitionsSingleLineImpl(node);
+      }
+      else if (type == VAR_STATEMENT) {
+        return new PyPasVarStatementImpl(node);
+      }
+      else if (type == VAR_STATEMENT_SINGLE_LINE) {
+        return new PyPasVarStatementSingleLineImpl(node);
       }
       else if (type == WHILE_STATEMENT) {
         return new PyPasWhileStatementImpl(node);

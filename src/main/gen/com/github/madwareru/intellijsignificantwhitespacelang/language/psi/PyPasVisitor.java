@@ -79,6 +79,26 @@ public class PyPasVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitLetDefinition(@NotNull PyPasLetDefinition o) {
+    visitPsiElement(o);
+  }
+
+  public void visitLetDefinitions(@NotNull PyPasLetDefinitions o) {
+    visitPsiElement(o);
+  }
+
+  public void visitLetDefinitionsSingleLine(@NotNull PyPasLetDefinitionsSingleLine o) {
+    visitPsiElement(o);
+  }
+
+  public void visitLetStatement(@NotNull PyPasLetStatement o) {
+    visitPsiElement(o);
+  }
+
+  public void visitLetStatementSingleLine(@NotNull PyPasLetStatementSingleLine o) {
+    visitPsiElement(o);
+  }
+
   public void visitLogicAndExpr(@NotNull PyPasLogicAndExpr o) {
     visitPsiElement(o);
   }
@@ -151,15 +171,23 @@ public class PyPasVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitVarBlock(@NotNull PyPasVarBlock o) {
-    visitPsiElement(o);
-  }
-
   public void visitVarDefinition(@NotNull PyPasVarDefinition o) {
     visitPsiElement(o);
   }
 
   public void visitVarDefinitions(@NotNull PyPasVarDefinitions o) {
+    visitPsiElement(o);
+  }
+
+  public void visitVarDefinitionsSingleLine(@NotNull PyPasVarDefinitionsSingleLine o) {
+    visitPsiElement(o);
+  }
+
+  public void visitVarStatement(@NotNull PyPasVarStatement o) {
+    visitPsiElement(o);
+  }
+
+  public void visitVarStatementSingleLine(@NotNull PyPasVarStatementSingleLine o) {
     visitPsiElement(o);
   }
 
