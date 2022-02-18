@@ -11,26 +11,20 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.github.madwareru.intellijsignificantwhitespacelang.language.psi.*;
 
-public class PyPasPlusMinusExprImpl extends ASTWrapperPsiElement implements PyPasPlusMinusExpr {
+public class PyPasEOperatorImpl extends ASTWrapperPsiElement implements PyPasEOperator {
 
-  public PyPasPlusMinusExprImpl(@NotNull ASTNode node) {
+  public PyPasEOperatorImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PyPasVisitor visitor) {
-    visitor.visitPlusMinusExpr(this);
+    visitor.visitEOperator(this);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof PyPasVisitor) accept((PyPasVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public List<PyPasTermExpr> getTermExprList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, PyPasTermExpr.class);
   }
 
 }

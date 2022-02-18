@@ -25,7 +25,6 @@
             STRING = "STRING"
             INDENT = "INDENT"
             UNINDENT = "UNINDENT"
-            END = "END"
             NEW_LINE = "NEW_LINE"
 
             PARENTHESISL = "("
@@ -88,9 +87,9 @@ var_definitions ::= (var_definition NEW_LINE)+
 var_definitions_single_line ::= var_definition (COMMA var_definition)*
 let_definitions ::= (let_definition NEW_LINE)+
 let_definitions_single_line ::= let_definition (COMMA let_definition)*
-var_definition ::= IDENT COLON type_definition [ASSIGNMENT_OP logic_and_expr]
-let_definition ::= IDENT COLON type_definition ASSIGNMENT_OP logic_and_expr
-arg_definition ::= IDENT COLON type_definition [EQ_OP logic_and_expr]
+var_definition ::= IDENT COLON type_definition [ASSIGNMENT_OP operator_expr]
+let_definition ::= IDENT COLON type_definition ASSIGNMENT_OP operator_expr
+arg_definition ::= IDENT COLON type_definition [EQ_OP operator_expr]
 type_definition ::= simple_type_definition | array_type_definition
 simple_type_definition ::= IDENT
 array_type_definition ::= ARRAY BRACKETL INTEGER TO INTEGER BRACKETR OF IDENT
@@ -104,8 +103,8 @@ statement ::= (single_line_statement (SEMICOLON single_line_statement)* NEW_LINE
 
 single_line_statement ::= assignment_statement | function_invocation | return_statement | var_statement_single_line | let_statement_single_line
 
-if_statement ::= IF logic_and_expr block_statements_body
-    (ELIF logic_and_expr block_statements_body)*
+if_statement ::= IF operator_expr block_statements_body
+    (ELIF operator_expr block_statements_body)*
     (ELSE block_statements_body)?
 
 var_statement ::= VAR NEW_LINE INDENT var_definitions UNINDENT
@@ -115,34 +114,29 @@ let_statement ::= LET NEW_LINE INDENT let_definitions UNINDENT
 let_statement_single_line ::= LET let_definitions_single_line
 
 for_statement ::= FOR IDENT ASSIGNMENT_OP constant_literal to constant_literal block_statements_body
-while_statement ::= WHILE logic_and_expr block_statements_body
-return_statement ::= RETURN logic_and_expr
-assignment_statement ::= lvalue ASSIGNMENT_OP logic_and_expr
+while_statement ::= WHILE operator_expr block_statements_body
+return_statement ::= RETURN operator_expr
+assignment_statement ::= lvalue ASSIGNMENT_OP operator_expr
 lvalue ::= subfield_access | indexed_access | IDENT
 constant_literal ::= BOOLEAN | INTEGER | FLOAT | STRING
 variable_access ::= IDENT
 subfield_access ::= IDENT (DOT IDENT)+
-indexed_access ::= IDENT (BRACKETL logic_and_expr BRACKETR)+
+indexed_access ::= IDENT (BRACKETL operator_expr BRACKETR)+
 function_invocation ::= IDENT PARENTHESISL [args] PARENTHESISR
 
-term_expr ::= (PARENTHESISL logic_and_expr PARENTHESISR)
+term_expr ::= (PARENTHESISL operator_expr PARENTHESISR)
     | function_invocation
     | indexed_access
     | subfield_access
     | constant_literal
     | variable_access
 
-plus_minus_expr ::= term_expr ((PLUS | MINUS) term_expr)*
-mul_div_mod_expr ::= plus_minus_expr ((MUL | DIV | MOD) plus_minus_expr)*
-bit_not_expr ::= BITWISE_NOT mul_div_mod_expr | mul_div_mod_expr
-bit_or_xor_expr ::= bit_not_expr ((BITWISE_OR | BITWISE_XOR) bit_not_expr)*
-bit_and_expr ::= bit_or_xor_expr (BITWISE_AND bit_or_xor_expr)*
-compare_expr ::= bit_and_expr ((LT_OP | LTEQ_OP | HT_OP | HTEQ_OP | EQ_OP | NEQ_OP ) bit_and_expr)*
-logic_not_expr ::= NOT compare_expr | compare_expr
-logic_or_expr ::= logic_not_expr (OR logic_not_expr)*
-logic_and_expr ::= logic_or_expr (AND logic_or_expr)*
+e_operator ::= (PLUS | MINUS | MUL | DIV | MOD | BITWISE_NOT | BITWISE_OR | BITWISE_XOR | BITWISE_AND
+    | LT_OP | LTEQ_OP | HT_OP | HTEQ_OP | EQ_OP | NEQ_OP | NOT | OR | AND)
+
+operator_expr ::= term_expr (e_operator operator_expr)*
 
 arg_defs ::= arg_definition (COMMA arg_definition)*
-args ::= logic_and_expr (COMMA logic_and_expr)*
+args ::= operator_expr (COMMA operator_expr)*
 record_define ::= RECORD IDENT record_body
 record_body ::= COLON NEW_LINE INDENT var_definitions UNINDENT

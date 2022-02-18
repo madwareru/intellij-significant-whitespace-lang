@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface PyPasArgs extends PsiElement {
 
   @NotNull
-  List<PyPasLogicAndExpr> getLogicAndExprList();
+  List<PyPasOperatorExpr> getOperatorExprList();
 
 }

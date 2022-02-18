@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface PyPasReturnStatement extends PsiElement {
 
   @NotNull
-  PyPasLogicAndExpr getLogicAndExpr();
+  PyPasOperatorExpr getOperatorExpr();
 
 }

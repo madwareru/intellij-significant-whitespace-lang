@@ -29,8 +29,8 @@ public class PyPasReturnStatementImpl extends ASTWrapperPsiElement implements Py
 
   @Override
   @NotNull
-  public PyPasLogicAndExpr getLogicAndExpr() {
-    return findNotNullChildByClass(PyPasLogicAndExpr.class);
+  public PyPasOperatorExpr getOperatorExpr() {
+    return findNotNullChildByClass(PyPasOperatorExpr.class);
   }
 
 }

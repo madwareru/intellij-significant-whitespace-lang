@@ -5,9 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface PyPasBitAndExpr extends PsiElement {
+public interface PyPasOperatorExpr extends PsiElement {
 
   @NotNull
-  List<PyPasBitOrXorExpr> getBitOrXorExprList();
+  List<PyPasEOperator> getEOperatorList();
+
+  @NotNull
+  List<PyPasOperatorExpr> getOperatorExprList();
+
+  @NotNull
+  PyPasTermExpr getTermExpr();
 
 }

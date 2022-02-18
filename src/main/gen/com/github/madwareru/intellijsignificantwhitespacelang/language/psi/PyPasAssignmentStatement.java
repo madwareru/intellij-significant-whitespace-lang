@@ -8,9 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface PyPasAssignmentStatement extends PsiElement {
 
   @NotNull
-  PyPasLogicAndExpr getLogicAndExpr();
+  PyPasLvalue getLvalue();
 
   @NotNull
-  PyPasLvalue getLvalue();
+  PyPasOperatorExpr getOperatorExpr();
 
 }

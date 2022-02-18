@@ -11,6 +11,6 @@ public interface PyPasWhileStatement extends PsiElement {
   PyPasBlockStatementsBody getBlockStatementsBody();
 
   @NotNull
-  PyPasLogicAndExpr getLogicAndExpr();
+  PyPasOperatorExpr getOperatorExpr();
 
 }

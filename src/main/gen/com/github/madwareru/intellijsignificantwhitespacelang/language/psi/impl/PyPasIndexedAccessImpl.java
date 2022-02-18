@@ -29,8 +29,8 @@ public class PyPasIndexedAccessImpl extends ASTWrapperPsiElement implements PyPa
 
   @Override
   @NotNull
-  public List<PyPasLogicAndExpr> getLogicAndExprList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, PyPasLogicAndExpr.class);
+  public List<PyPasOperatorExpr> getOperatorExprList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PyPasOperatorExpr.class);
   }
 
   @Override

@@ -35,8 +35,8 @@ public class PyPasIfStatementImpl extends ASTWrapperPsiElement implements PyPasI
 
   @Override
   @NotNull
-  public List<PyPasLogicAndExpr> getLogicAndExprList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, PyPasLogicAndExpr.class);
+  public List<PyPasOperatorExpr> getOperatorExprList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PyPasOperatorExpr.class);
   }
 
 }

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface PyPasArgDefinition extends PsiElement {
 
   @Nullable
-  PyPasLogicAndExpr getLogicAndExpr();
+  PyPasOperatorExpr getOperatorExpr();
 
   @NotNull
   PyPasTypeDefinition getTypeDefinition();

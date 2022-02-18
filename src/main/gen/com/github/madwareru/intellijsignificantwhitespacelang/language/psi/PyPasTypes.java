@@ -13,14 +13,11 @@ public interface PyPasTypes {
   IElementType ARG_DEFS = new PyPasElementType("ARG_DEFS");
   IElementType ARRAY_TYPE_DEFINITION = new PyPasElementType("ARRAY_TYPE_DEFINITION");
   IElementType ASSIGNMENT_STATEMENT = new PyPasElementType("ASSIGNMENT_STATEMENT");
-  IElementType BIT_AND_EXPR = new PyPasElementType("BIT_AND_EXPR");
-  IElementType BIT_NOT_EXPR = new PyPasElementType("BIT_NOT_EXPR");
-  IElementType BIT_OR_XOR_EXPR = new PyPasElementType("BIT_OR_XOR_EXPR");
   IElementType BLOCK_STATEMENTS_BODY = new PyPasElementType("BLOCK_STATEMENTS_BODY");
-  IElementType COMPARE_EXPR = new PyPasElementType("COMPARE_EXPR");
   IElementType CONSTANT_LITERAL = new PyPasElementType("CONSTANT_LITERAL");
   IElementType DEFINITION = new PyPasElementType("DEFINITION");
   IElementType DEFINITIONS = new PyPasElementType("DEFINITIONS");
+  IElementType E_OPERATOR = new PyPasElementType("E_OPERATOR");
   IElementType FOR_STATEMENT = new PyPasElementType("FOR_STATEMENT");
   IElementType FUNCTION_INVOCATION = new PyPasElementType("FUNCTION_INVOCATION");
   IElementType FUNC_DEFINE = new PyPasElementType("FUNC_DEFINE");
@@ -31,12 +28,8 @@ public interface PyPasTypes {
   IElementType LET_DEFINITIONS_SINGLE_LINE = new PyPasElementType("LET_DEFINITIONS_SINGLE_LINE");
   IElementType LET_STATEMENT = new PyPasElementType("LET_STATEMENT");
   IElementType LET_STATEMENT_SINGLE_LINE = new PyPasElementType("LET_STATEMENT_SINGLE_LINE");
-  IElementType LOGIC_AND_EXPR = new PyPasElementType("LOGIC_AND_EXPR");
-  IElementType LOGIC_NOT_EXPR = new PyPasElementType("LOGIC_NOT_EXPR");
-  IElementType LOGIC_OR_EXPR = new PyPasElementType("LOGIC_OR_EXPR");
   IElementType LVALUE = new PyPasElementType("LVALUE");
-  IElementType MUL_DIV_MOD_EXPR = new PyPasElementType("MUL_DIV_MOD_EXPR");
-  IElementType PLUS_MINUS_EXPR = new PyPasElementType("PLUS_MINUS_EXPR");
+  IElementType OPERATOR_EXPR = new PyPasElementType("OPERATOR_EXPR");
   IElementType PROC_DEFINE = new PyPasElementType("PROC_DEFINE");
   IElementType PROGRAM_HEADER = new PyPasElementType("PROGRAM_HEADER");
   IElementType RECORD_BODY = new PyPasElementType("RECORD_BODY");
@@ -78,7 +71,6 @@ public interface PyPasTypes {
   IElementType DOT = new PyPasTokenType(".");
   IElementType ELIF = new PyPasTokenType("elif");
   IElementType ELSE = new PyPasTokenType("else");
-  IElementType END = new PyPasTokenType("END");
   IElementType EQ_OP = new PyPasTokenType("=");
   IElementType FLOAT = new PyPasTokenType("FLOAT");
   IElementType FOR = new PyPasTokenType("for");
@@ -133,20 +125,8 @@ public interface PyPasTypes {
       else if (type == ASSIGNMENT_STATEMENT) {
         return new PyPasAssignmentStatementImpl(node);
       }
-      else if (type == BIT_AND_EXPR) {
-        return new PyPasBitAndExprImpl(node);
-      }
-      else if (type == BIT_NOT_EXPR) {
-        return new PyPasBitNotExprImpl(node);
-      }
-      else if (type == BIT_OR_XOR_EXPR) {
-        return new PyPasBitOrXorExprImpl(node);
-      }
       else if (type == BLOCK_STATEMENTS_BODY) {
         return new PyPasBlockStatementsBodyImpl(node);
-      }
-      else if (type == COMPARE_EXPR) {
-        return new PyPasCompareExprImpl(node);
       }
       else if (type == CONSTANT_LITERAL) {
         return new PyPasConstantLiteralImpl(node);
@@ -156,6 +136,9 @@ public interface PyPasTypes {
       }
       else if (type == DEFINITIONS) {
         return new PyPasDefinitionsImpl(node);
+      }
+      else if (type == E_OPERATOR) {
+        return new PyPasEOperatorImpl(node);
       }
       else if (type == FOR_STATEMENT) {
         return new PyPasForStatementImpl(node);
@@ -187,23 +170,11 @@ public interface PyPasTypes {
       else if (type == LET_STATEMENT_SINGLE_LINE) {
         return new PyPasLetStatementSingleLineImpl(node);
       }
-      else if (type == LOGIC_AND_EXPR) {
-        return new PyPasLogicAndExprImpl(node);
-      }
-      else if (type == LOGIC_NOT_EXPR) {
-        return new PyPasLogicNotExprImpl(node);
-      }
-      else if (type == LOGIC_OR_EXPR) {
-        return new PyPasLogicOrExprImpl(node);
-      }
       else if (type == LVALUE) {
         return new PyPasLvalueImpl(node);
       }
-      else if (type == MUL_DIV_MOD_EXPR) {
-        return new PyPasMulDivModExprImpl(node);
-      }
-      else if (type == PLUS_MINUS_EXPR) {
-        return new PyPasPlusMinusExprImpl(node);
+      else if (type == OPERATOR_EXPR) {
+        return new PyPasOperatorExprImpl(node);
       }
       else if (type == PROC_DEFINE) {
         return new PyPasProcDefineImpl(node);

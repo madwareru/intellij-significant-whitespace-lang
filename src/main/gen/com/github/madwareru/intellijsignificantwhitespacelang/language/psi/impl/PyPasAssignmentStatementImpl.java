@@ -29,14 +29,14 @@ public class PyPasAssignmentStatementImpl extends ASTWrapperPsiElement implement
 
   @Override
   @NotNull
-  public PyPasLogicAndExpr getLogicAndExpr() {
-    return findNotNullChildByClass(PyPasLogicAndExpr.class);
+  public PyPasLvalue getLvalue() {
+    return findNotNullChildByClass(PyPasLvalue.class);
   }
 
   @Override
   @NotNull
-  public PyPasLvalue getLvalue() {
-    return findNotNullChildByClass(PyPasLvalue.class);
+  public PyPasOperatorExpr getOperatorExpr() {
+    return findNotNullChildByClass(PyPasOperatorExpr.class);
   }
 
 }

@@ -47,8 +47,8 @@ public class PyPasTermExprImpl extends ASTWrapperPsiElement implements PyPasTerm
 
   @Override
   @Nullable
-  public PyPasLogicAndExpr getLogicAndExpr() {
-    return findChildByClass(PyPasLogicAndExpr.class);
+  public PyPasOperatorExpr getOperatorExpr() {
+    return findChildByClass(PyPasOperatorExpr.class);
   }
 
   @Override

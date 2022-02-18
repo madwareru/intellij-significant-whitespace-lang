@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface PyPasIndexedAccess extends PsiElement {
 
   @NotNull
-  List<PyPasLogicAndExpr> getLogicAndExprList();
+  List<PyPasOperatorExpr> getOperatorExprList();
 
   @NotNull
   PsiElement getIdent();

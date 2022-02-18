@@ -1,6 +1,8 @@
 package com.github.madwareru.intellijsignificantwhitespacelang.ide.folding
 
 import com.github.madwareru.intellijsignificantwhitespacelang.language.psi.*
+import com.github.madwareru.intellijsignificantwhitespacelang.util.isElementOfType
+import com.github.madwareru.intellijsignificantwhitespacelang.util.scrollLeft
 import com.intellij.lang.ASTNode
 import com.intellij.lang.folding.CustomFoldingBuilder
 import com.intellij.lang.folding.FoldingDescriptor
@@ -9,9 +11,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.elementType
 
 class PyPasFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     override fun buildLanguageFoldRegions(
@@ -64,7 +64,7 @@ private class PyPasFoldingVisitor(private val descriptors: MutableList<FoldingDe
     fun getLastChildForVarDefinitions(varDefinitions: PyPasVarDefinitions): PsiElement? {
         var lastChild = varDefinitions.varDefinitionList.lastOrNull()?.lastChild
         while (lastChild != null && shouldScrollLeft(lastChild)) {
-            lastChild = scrollLeft(lastChild)
+            lastChild = lastChild.scrollLeft()
         }
         return lastChild
     }
@@ -72,17 +72,13 @@ private class PyPasFoldingVisitor(private val descriptors: MutableList<FoldingDe
     fun getLastChildForStatements(statements: PyPasStatements): PsiElement? {
         var lastChild = statements.statementList.lastOrNull()?.lastChild
         while (lastChild != null && shouldScrollLeft(lastChild)) {
-            lastChild = scrollLeft(lastChild)
+            lastChild = lastChild.scrollLeft()
         }
         return lastChild
     }
 
     fun shouldScrollLeft(element: PsiElement): Boolean =
-        isElementOfType(element, PyPasTypes.NEW_LINE) ||
-                isElementOfType(element, PyPasTypes.UNINDENT) ||
+        element.isElementOfType(PyPasTypes.NEW_LINE) ||
+                element.isElementOfType(PyPasTypes.UNINDENT) ||
                 element is PsiWhiteSpace
-
-    fun scrollLeft(element: PsiElement): PsiElement? = element.prevSibling ?: element.parent
-
-    fun isElementOfType(element: PsiElement, test: IElementType): Boolean = element.elementType?.equals(test) ?: false
 }

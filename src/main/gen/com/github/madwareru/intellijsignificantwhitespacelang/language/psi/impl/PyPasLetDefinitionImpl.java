@@ -29,8 +29,8 @@ public class PyPasLetDefinitionImpl extends ASTWrapperPsiElement implements PyPa
 
   @Override
   @NotNull
-  public PyPasLogicAndExpr getLogicAndExpr() {
-    return findNotNullChildByClass(PyPasLogicAndExpr.class);
+  public PyPasOperatorExpr getOperatorExpr() {
+    return findNotNullChildByClass(PyPasOperatorExpr.class);
   }
 
   @Override

@@ -27,23 +27,7 @@ public class PyPasVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitBitAndExpr(@NotNull PyPasBitAndExpr o) {
-    visitPsiElement(o);
-  }
-
-  public void visitBitNotExpr(@NotNull PyPasBitNotExpr o) {
-    visitPsiElement(o);
-  }
-
-  public void visitBitOrXorExpr(@NotNull PyPasBitOrXorExpr o) {
-    visitPsiElement(o);
-  }
-
   public void visitBlockStatementsBody(@NotNull PyPasBlockStatementsBody o) {
-    visitPsiElement(o);
-  }
-
-  public void visitCompareExpr(@NotNull PyPasCompareExpr o) {
     visitPsiElement(o);
   }
 
@@ -56,6 +40,10 @@ public class PyPasVisitor extends PsiElementVisitor {
   }
 
   public void visitDefinitions(@NotNull PyPasDefinitions o) {
+    visitPsiElement(o);
+  }
+
+  public void visitEOperator(@NotNull PyPasEOperator o) {
     visitPsiElement(o);
   }
 
@@ -99,27 +87,11 @@ public class PyPasVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitLogicAndExpr(@NotNull PyPasLogicAndExpr o) {
-    visitPsiElement(o);
-  }
-
-  public void visitLogicNotExpr(@NotNull PyPasLogicNotExpr o) {
-    visitPsiElement(o);
-  }
-
-  public void visitLogicOrExpr(@NotNull PyPasLogicOrExpr o) {
-    visitPsiElement(o);
-  }
-
   public void visitLvalue(@NotNull PyPasLvalue o) {
     visitPsiElement(o);
   }
 
-  public void visitMulDivModExpr(@NotNull PyPasMulDivModExpr o) {
-    visitPsiElement(o);
-  }
-
-  public void visitPlusMinusExpr(@NotNull PyPasPlusMinusExpr o) {
+  public void visitOperatorExpr(@NotNull PyPasOperatorExpr o) {
     visitPsiElement(o);
   }
 

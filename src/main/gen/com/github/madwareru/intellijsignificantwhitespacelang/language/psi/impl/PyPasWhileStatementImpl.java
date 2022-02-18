@@ -35,8 +35,8 @@ public class PyPasWhileStatementImpl extends ASTWrapperPsiElement implements PyP
 
   @Override
   @NotNull
-  public PyPasLogicAndExpr getLogicAndExpr() {
-    return findNotNullChildByClass(PyPasLogicAndExpr.class);
+  public PyPasOperatorExpr getOperatorExpr() {
+    return findNotNullChildByClass(PyPasOperatorExpr.class);
   }
 
 }

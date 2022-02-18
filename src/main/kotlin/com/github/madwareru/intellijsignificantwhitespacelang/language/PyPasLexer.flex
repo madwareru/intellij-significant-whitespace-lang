@@ -17,6 +17,7 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
 
 %{
     private boolean atBeginningOfTheLine = true;
+    private boolean lastTokenPermitsSkipNewline = false;
     private Deque<Integer> indentStack = new ArrayDeque<Integer>();
     private int currentIndent = 0;
 %}
@@ -116,7 +117,7 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
 COMMENT=[ \t\r]*"//"[^\n]*
 BOOLEAN=true|false
 IDENT=[A-Za-z_][A-Za-z0-9_]*
-INTEGER=[+-]?[0-9][0-9_]*
+INTEGER=[+-]?([0-9][0-9]*|0x[0-9a-fA-F]+)
 FLOAT=([+-]?[0-9]+\.[0-9]*([Ee][0-9]+)?)|(\.[0-9]+([Ee][0-9]+)?)
 CHAR='([^\r\n\"] | (\\[\S]))'
 STRING=\"([^\r\n\"]|(\\[\S]))*\"
@@ -125,66 +126,65 @@ STRING=\"([^\r\n\"]|(\\[\S]))*\"
 
 <YYINITIAL> {
     [ \t\r]*\n           {
-                             if (atBeginningOfTheLine) {
+                             if (atBeginningOfTheLine || lastTokenPermitsSkipNewline) {
                                  return WHITE_SPACE;
                              }
                              atBeginningOfTheLine = true;
                              return NEW_LINE;
                          }
     [ \t]                {if (!checkBol()) { return WHITE_SPACE; } }
-    "("                  { if (!checkBol()) { return PARENTHESISL; } }
-    ")"                  { if (!checkBol()) { return PARENTHESISR; } }
-    "["                  { if (!checkBol()) { return BRACKETL; } }
-    "]"                  { if (!checkBol()) { return BRACKETR; } }
-    "{"                  { if (!checkBol()) { return BRACEL; } }
-    "}"                  { if (!checkBol()) { return BRACER; } }
-    ":"                  { if (!checkBol()) { return COLON; } }
-    ";"                  { if (!checkBol()) { return SEMICOLON; } }
-    ","                  { if (!checkBol()) { return COMMA; } }
-    "."                  { if (!checkBol()) { return DOT; } }
-    "and"                { if (!checkBol()) { return AND; } }
-    "or"                 { if (!checkBol()) { return OR; } }
-    "not"                { if (!checkBol()) { return NOT; } }
-    "&"                  { if (!checkBol()) { return BITWISE_AND; } }
-    "|"                  { if (!checkBol()) { return BITWISE_OR; } }
-    "~"                  { if (!checkBol()) { return BITWISE_NOT; } }
-    "^"                  { if (!checkBol()) { return BITWISE_XOR; } }
-    "+"                  { if (!checkBol()) { return PLUS; } }
-    "-"                  { if (!checkBol()) { return MINUS; } }
-    "/"                  { if (!checkBol()) { return DIV; } }
-    "%"                  { if (!checkBol()) { return MOD; } }
-    "*"                  { if (!checkBol()) { return MUL; } }
-    ":="                 { if (!checkBol()) { return ASSIGNMENT_OP; } }
-    "!="                 { if (!checkBol()) { return NEQ_OP; } }
-    "="                  { if (!checkBol()) { return EQ_OP; } }
-    "<"                  { if (!checkBol()) { return LT_OP; } }
-    ">"                  { if (!checkBol()) { return HT_OP; } }
-    "<="                 { if (!checkBol()) { return LTEQ_OP; } }
-    ">="                 { if (!checkBol()) { return HTEQ_OP; } }
-    "var"                { if (!checkBol()) { return VAR; } }
-    "let"                { if (!checkBol()) { return LET; } }
-    "mod"                { if (!checkBol()) { return MODULE; } }
-    "fn"                 { if (!checkBol()) { return FUNCTION; } }
-    "proc"               { if (!checkBol()) { return PROCEDURE; } }
-    "if"                 { if (!checkBol()) { return IF; } }
-    "elif"               { if (!checkBol()) { return ELIF; } }
-    "else"               { if (!checkBol()) { return ELSE; } }
-    "for"                { if (!checkBol()) { return FOR; } }
-    "to"                 { if (!checkBol()) { return TO; } }
-    "while"              { if (!checkBol()) { return WHILE; } }
-    "as"                 { if (!checkBol()) { return AS; } }
-    "record"             { if (!checkBol()) { return RECORD; } }
-    "array"              { if (!checkBol()) { return ARRAY; } }
-    "return"             { if (!checkBol()) { return RETURN; } }
-    "of"                 { if (!checkBol()) { return OF; } }
-    "end"                { if (!checkBol()) { return END; } }
+    "("                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return PARENTHESISL; } }
+    ")"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return PARENTHESISR; } }
+    "["                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return BRACKETL; } }
+    "]"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return BRACKETR; } }
+    "{"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return BRACEL; } }
+    "}"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return BRACER; } }
+    ":"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return COLON; } }
+    ";"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return SEMICOLON; } }
+    ","                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return COMMA; } }
+    "."                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return DOT; } }
+    "and"                { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return AND; } }
+    "or"                 { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return OR; } }
+    "not"                { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return NOT; } }
+    "&"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return BITWISE_AND; } }
+    "|"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return BITWISE_OR; } }
+    "~"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return BITWISE_NOT; } }
+    "^"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return BITWISE_XOR; } }
+    "+"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return PLUS; } }
+    "-"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return MINUS; } }
+    "/"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return DIV; } }
+    "%"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return MOD; } }
+    "*"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return MUL; } }
+    ":="                 { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return ASSIGNMENT_OP; } }
+    "!="                 { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return NEQ_OP; } }
+    "="                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return EQ_OP; } }
+    "<"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return LT_OP; } }
+    ">"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return HT_OP; } }
+    "<="                 { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return LTEQ_OP; } }
+    ">="                 { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return HTEQ_OP; } }
+    "var"                { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return VAR; } }
+    "let"                { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return LET; } }
+    "mod"                { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return MODULE; } }
+    "fn"                 { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return FUNCTION; } }
+    "proc"               { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return PROCEDURE; } }
+    "if"                 { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return IF; } }
+    "elif"               { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return ELIF; } }
+    "else"               { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return ELSE; } }
+    "for"                { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return FOR; } }
+    "to"                 { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return TO; } }
+    "while"              { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return WHILE; } }
+    "as"                 { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return AS; } }
+    "record"             { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return RECORD; } }
+    "array"              { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return ARRAY; } }
+    "return"             { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return RETURN; } }
+    "of"                 { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return OF; } }
     {COMMENT}            { return COMMENT; }
-    {BOOLEAN}            { if (!checkBol()) { return BOOLEAN; } }
-    {IDENT}              { if (!checkBol()) { return IDENT; } }
-    {INTEGER}            { if (!checkBol()) { return INTEGER; } }
-    {FLOAT}              { if (!checkBol()) { return FLOAT; } }
-    {CHAR}               { if (!checkBol()) { return CHAR; } }
-    {STRING}             { if (!checkBol()) { return STRING; } }
+    {BOOLEAN}            { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return BOOLEAN; } }
+    {IDENT}              { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return IDENT; } }
+    {INTEGER}            { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return INTEGER; } }
+    {FLOAT}              { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return FLOAT; } }
+    {CHAR}               { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return CHAR; } }
+    {STRING}             { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return STRING; } }
 }
 
 <IN_INDENT, IN_INDENT1> {

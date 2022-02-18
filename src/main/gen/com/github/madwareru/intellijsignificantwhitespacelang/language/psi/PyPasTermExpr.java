@@ -17,7 +17,7 @@ public interface PyPasTermExpr extends PsiElement {
   PyPasIndexedAccess getIndexedAccess();
 
   @Nullable
-  PyPasLogicAndExpr getLogicAndExpr();
+  PyPasOperatorExpr getOperatorExpr();
 
   @Nullable
   PyPasSubfieldAccess getSubfieldAccess();

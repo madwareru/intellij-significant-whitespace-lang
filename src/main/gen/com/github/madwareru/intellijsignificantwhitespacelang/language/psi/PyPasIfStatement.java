@@ -11,6 +11,6 @@ public interface PyPasIfStatement extends PsiElement {
   List<PyPasBlockStatementsBody> getBlockStatementsBodyList();
 
   @NotNull
-  List<PyPasLogicAndExpr> getLogicAndExprList();
+  List<PyPasOperatorExpr> getOperatorExprList();
 
 }

@@ -11,14 +11,14 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.github.madwareru.intellijsignificantwhitespacelang.language.psi.*;
 
-public class PyPasBitOrXorExprImpl extends ASTWrapperPsiElement implements PyPasBitOrXorExpr {
+public class PyPasOperatorExprImpl extends ASTWrapperPsiElement implements PyPasOperatorExpr {
 
-  public PyPasBitOrXorExprImpl(@NotNull ASTNode node) {
+  public PyPasOperatorExprImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PyPasVisitor visitor) {
-    visitor.visitBitOrXorExpr(this);
+    visitor.visitOperatorExpr(this);
   }
 
   @Override
@@ -29,8 +29,20 @@ public class PyPasBitOrXorExprImpl extends ASTWrapperPsiElement implements PyPas
 
   @Override
   @NotNull
-  public List<PyPasBitNotExpr> getBitNotExprList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, PyPasBitNotExpr.class);
+  public List<PyPasEOperator> getEOperatorList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PyPasEOperator.class);
+  }
+
+  @Override
+  @NotNull
+  public List<PyPasOperatorExpr> getOperatorExprList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PyPasOperatorExpr.class);
+  }
+
+  @Override
+  @NotNull
+  public PyPasTermExpr getTermExpr() {
+    return findNotNullChildByClass(PyPasTermExpr.class);
   }
 
 }
