@@ -31,8 +31,6 @@
             PARENTHESISR = ")"
             BRACKETL = "["
             BRACKETR = "]"
-            BRACEL = "{"
-            BRACER = "}"
             COLON = ":"
             SEMICOLON = ";"
             COMMA = ","

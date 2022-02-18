@@ -7,8 +7,12 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.markup.EffectType
+import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiEditorUtil
+import com.intellij.refactoring.suggested.endOffset
+import com.intellij.refactoring.suggested.startOffset
 import java.awt.Color
 
 class PyPasHighlightingAnnotator : BaseAnnotator() {
@@ -19,10 +23,14 @@ class PyPasHighlightingAnnotator : BaseAnnotator() {
             val elementText = element.text
             val colorRegex = Regex("0x[0-9a-fA-F]{6}")
             if (colorRegex.matches(elementText)) {
-                val attributes = PyPasColors.NUMBER.textAttributesKey.defaultAttributes
+                val attributes = PyPasColors.NUMBER.textAttributesKey.defaultAttributes.clone()
                 val color = Color.decode(elementText)
-                attributes.effectColor = color
-                attributes.effectType = EffectType.BOLD_LINE_UNDERSCORE
+                attributes.backgroundColor = color
+                if (color.blue > 127 && color.green > 127 && color.red > 127) {
+                    attributes.foregroundColor = Color.BLACK
+                } else {
+                    attributes.foregroundColor = Color.WHITE
+                }
                 holder
                     .newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .enforcedTextAttributes(attributes)

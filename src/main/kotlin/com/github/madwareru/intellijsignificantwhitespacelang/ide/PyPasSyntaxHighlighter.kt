@@ -32,7 +32,6 @@ class PyPasSyntaxHighlighter : SyntaxHighlighterBase() {
         return when (tokenType) {
             PyPasTypes.PARENTHESISL, PyPasTypes.PARENTHESISR -> PyPasColors.PARENTHESES
             PyPasTypes.BRACKETL, PyPasTypes.BRACKETR -> PyPasColors.BRACKETS
-            PyPasTypes.BRACEL, PyPasTypes.BRACER -> PyPasColors.BRACES
             PyPasTypes.INTEGER, PyPasTypes.FLOAT, PyPasTypes.BOOLEAN -> PyPasColors.NUMBER
             PyPasTypes.STRING, PyPasTypes.CHAR -> PyPasColors.STRING
             PyPasTypes.COMMENT -> PyPasColors.COMMENT

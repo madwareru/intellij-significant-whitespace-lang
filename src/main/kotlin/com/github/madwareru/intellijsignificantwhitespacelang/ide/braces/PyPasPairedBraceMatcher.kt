@@ -19,7 +19,6 @@ class PyPasPairedBraceMatcher : PairedBraceMatcher {
 
     companion object {
         private val PAIRS = arrayOf(
-            BracePair(PyPasTypes.BRACEL, PyPasTypes.BRACER, true),
             BracePair(PyPasTypes.BRACKETL, PyPasTypes.BRACKETR, true),
             BracePair(PyPasTypes.PARENTHESISL, PyPasTypes.PARENTHESISR, true)
         )
@@ -30,8 +29,6 @@ class PyPasPairedBraceMatcher : PairedBraceMatcher {
                 PyPasTypes.COMMA,
                 PyPasTypes.PARENTHESISR,
                 PyPasTypes.BRACKETR,
-                PyPasTypes.BRACER,
-                PyPasTypes.BRACEL
             )
         )
     }

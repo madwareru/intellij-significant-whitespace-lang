@@ -34,5 +34,9 @@
                 language="PyPas"
                 implementationClass="com.github.madwareru.intellijsignificantwhitespacelang.ide.annotators.PyPasHighlightingAnnotator"
         />
+        <codeInsight.lineMarkerProvider
+                language="PyPas"
+                implementationClass="com.github.madwareru.intellijsignificantwhitespacelang.ide.colors.PyPasColoredConstantsProvider"
+        />
     </extensions>
 </idea-plugin>

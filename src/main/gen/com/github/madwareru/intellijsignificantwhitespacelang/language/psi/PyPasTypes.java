@@ -59,8 +59,6 @@ public interface PyPasTypes {
   IElementType BITWISE_OR = new PyPasTokenType("|");
   IElementType BITWISE_XOR = new PyPasTokenType("^");
   IElementType BOOLEAN = new PyPasTokenType("BOOLEAN");
-  IElementType BRACEL = new PyPasTokenType("{");
-  IElementType BRACER = new PyPasTokenType("}");
   IElementType BRACKETL = new PyPasTokenType("[");
   IElementType BRACKETR = new PyPasTokenType("]");
   IElementType CHAR = new PyPasTokenType("CHAR");

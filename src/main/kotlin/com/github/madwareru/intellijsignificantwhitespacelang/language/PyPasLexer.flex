@@ -16,10 +16,16 @@ import static com.github.madwareru.intellijsignificantwhitespacelang.language.ps
 %}
 
 %{
+    private static final int PARENTHESIS = 1;
+    private static final int BRACKET = 2;
+    private static final int NONE = 3;
+
     private boolean atBeginningOfTheLine = true;
     private boolean lastTokenPermitsSkipNewline = false;
     private Deque<Integer> indentStack = new ArrayDeque<Integer>();
     private int currentIndent = 0;
+    private int unbalancedBraces = 0;
+    private int lastUnbalancedBrace = NONE;
 %}
 
 %{
@@ -126,19 +132,39 @@ STRING=\"([^\r\n\"]|(\\[\S]))*\"
 
 <YYINITIAL> {
     [ \t\r]*\n           {
-                             if (atBeginningOfTheLine || lastTokenPermitsSkipNewline) {
+                             if (atBeginningOfTheLine || lastTokenPermitsSkipNewline || unbalancedBraces > 0) {
                                  return WHITE_SPACE;
                              }
                              atBeginningOfTheLine = true;
                              return NEW_LINE;
                          }
     [ \t]                {if (!checkBol()) { return WHITE_SPACE; } }
-    "("                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return PARENTHESISL; } }
-    ")"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return PARENTHESISR; } }
-    "["                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return BRACKETL; } }
-    "]"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return BRACKETR; } }
-    "{"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return BRACEL; } }
-    "}"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return BRACER; } }
+    "("                  { if (!checkBol()) {
+                               unbalancedBraces++;
+                               lastUnbalancedBrace = PARENTHESIS;
+                               lastTokenPermitsSkipNewline = false;
+                               return PARENTHESISL;
+                           }
+                         }
+    ")"                  { if (!checkBol()) {
+                             unbalancedBraces--;
+                             lastTokenPermitsSkipNewline = false;
+                             return PARENTHESISR;
+                           }
+                         }
+    "["                  { if (!checkBol()) {
+                             unbalancedBraces++;
+                             lastUnbalancedBrace = BRACKET;
+                             lastTokenPermitsSkipNewline = false;
+                             return BRACKETL;
+                           }
+                         }
+    "]"                  { if (!checkBol()) {
+                               unbalancedBraces--;
+                               lastTokenPermitsSkipNewline = false;
+                               return BRACKETR;
+                           }
+                         }
     ":"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = false; return COLON; } }
     ";"                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return SEMICOLON; } }
     ","                  { if (!checkBol()) { lastTokenPermitsSkipNewline = true; return COMMA; } }
